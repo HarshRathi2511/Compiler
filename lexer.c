@@ -108,6 +108,10 @@ typedef enum TOKEN_TYPE {
 	TK_LT,
 	TK_LE,
 	TK_ASSIGNOP,
+	TK_FUNID,
+	TK_RUID,
+	TK_NUM,
+	TK_RNUM,
 } TOKEN_TYPE; 
 
 typedef struct TOKEN // Structure of the token
@@ -116,13 +120,42 @@ typedef struct TOKEN // Structure of the token
 	char lexeme[MAX_LEXEME_SIZE]; // DOUBT
 	unsigned int line_number;
 	TOKEN_VAL token_value;
+	bool isEOF;
 } TOKEN;
 
 void printToken(const TOKEN *token) {
-    printf(GREEN "Token Type: %d\n", token->token_type);
-    printf("Lexeme: %s\n", token->lexeme);
+    printf(GREEN "Token Type: ");
+    if (token->token_type == TK_EQ) printf("TK_EQ");
+    else if (token->token_type == TK_NE) printf("TK_NE");
+    else if (token->token_type == TK_NOT) printf("TK_NOT");
+    else if (token->token_type == TK_AND) printf("TK_AND");
+    else if (token->token_type == TK_OR) printf("TK_OR");
+    else if (token->token_type == TK_PLUS) printf("TK_PLUS");
+    else if (token->token_type == TK_MINUS) printf("TK_MINUS");
+    else if (token->token_type == TK_MUL) printf("TK_MUL");
+    else if (token->token_type == TK_DIV) printf("TK_DIV");
+    else if (token->token_type == TK_DOT) printf("TK_DOT");
+    else if (token->token_type == TK_COMMA) printf("TK_COMMA");
+    else if (token->token_type == TK_COLON) printf("TK_COLON");
+    else if (token->token_type == TK_SEM) printf("TK_SEM");
+    else if (token->token_type == TK_CL) printf("TK_CL");
+    else if (token->token_type == TK_OP) printf("TK_OP");
+    else if (token->token_type == TK_SQR) printf("TK_SQR");
+    else if (token->token_type == TK_SQL) printf("TK_SQL");
+    else if (token->token_type == TK_COMMENT) printf("TK_COMMENT");
+    else if (token->token_type == TK_GT) printf("TK_GT");
+    else if (token->token_type == TK_GE) printf("TK_GE");
+    else if (token->token_type == TK_LT) printf("TK_LT");
+    else if (token->token_type == TK_LE) printf("TK_LE");
+    else if (token->token_type == TK_ASSIGNOP) printf("TK_ASSIGNOP");
+    else if (token->token_type == TK_FUNID) printf("TK_FUNID");
+    else if (token->token_type == TK_RUID) printf("TK_RUID");
+    else if (token->token_type == TK_NUM) printf("TK_NUM");
+    else if (token->token_type == TK_RNUM) printf("TK_RNUM");
+    
+    printf("\nLexeme: %s\n", token->lexeme);
     printf("Line Number: %u\n", token->line_number);
-	printf("\n"); 
+    printf("\n"); 
 }
 
 static int state = 1; // 1 is the init state
@@ -131,6 +164,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 {
 
 	TOKEN *token = malloc(sizeof(TOKEN));
+	token->isEOF = false;
 	char curr;
 	int i = 0; // this is the lexeme offset
 	while (1)
@@ -144,6 +178,9 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				}else if(curr == '\n'){
 					state = 1; 
 					line_number++;
+				}else if(curr == EOF){
+					token->isEOF = true;
+					return token;
 				}
 				else if (curr == '=') {
 					state = 2;
@@ -205,7 +242,25 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				}else if(curr == '<'){
 					state = 30; 
 					token->lexeme[i++] = curr; 
+				}else if (curr == '_'){
+					state = 37;
+					token->lexeme[i++] = curr;		
+				}else if(curr == '#'){
+					state = 41; 
+					token->lexeme[i++] = curr; 
 				}
+				//! need to fix 44 and 46
+				else if(curr == 'a' || curr >= 'e' && curr <= 'z'){
+					state = 44; 
+					token->lexeme[i++] = curr; 
+				}else if(curr >= 'b' && curr <= 'd'){
+					state = 46; 
+					token->lexeme[i++] = curr;
+				}else if((curr - '0') >= 0 && (curr - '0') <= 9){
+					state = 50; 
+					token->lexeme[i++] = curr; 
+				}
+				
 				//write other cases here
 				break;
 			}
@@ -215,7 +270,10 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else{
 					//break into error 
-
+					//report lexical error
+					// state = 1; 
+					printf(RED BOLD "Lexical case 2 Error :- cant use = like this %s Line :- %d \n", token->lexeme, 
+					line_number); 
 				}	
 				break;			
 			}
@@ -234,6 +292,9 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else{
 					//report lexical error
+					state = 1; 
+					printf(RED BOLD "Lexical Error :- cant use = like this %s Line :- %d \n", token->lexeme, 
+					line_number); 
 				}
 				break; 
 			}
@@ -270,6 +331,9 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else{
 					//report lexical error 
+					state = 1; 
+					printf(RED BOLD "Lexical Error invalid &&& :- %s Line :- %d \n", token->lexeme, 
+					line_number); 
 				}
 				break;
 			}
@@ -297,6 +361,8 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else{
 					//report lexical error 
+					printf(RED BOLD "Lexical Error invalid @@@ :- %s Line :- %d \n", token->lexeme, 
+					line_number); 
 				}
 				break;
 			}
@@ -420,7 +486,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				}else{
 					//when we found a new line 
 					//retract one step 
-					tb->fwd--; 
+					tb->fwd--; //to re read the \n again as single point of updation of line number
 					state = 1; //re read the \n again 
 				}
 				break;
@@ -464,6 +530,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				return token;
 			}	
 			case 30: {
+				printf("in case 30");
 				if(curr == '='){
 					state = 32; 
 					token->lexeme[i++] = curr; 
@@ -507,6 +574,28 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				}
 				break;
 			}
+			case 34: {
+				if(curr == '-'){
+					token->lexeme[i++] = curr; 
+					state = 35; 
+				}else{
+					//report a lexical error
+					printf(RED BOLD "Lexical Error invalid assign op :- %s Line :- %d \n", token->lexeme, 
+					line_number); 
+				}
+				break;
+			}
+			case 35: {
+				//accept state for assignop 
+				state = 1;
+                
+				//also remove one char from the lexeme
+				token->lexeme[i] = '\0'; 
+				token->token_type = TK_ASSIGNOP;
+				token->line_number = line_number;
+
+				return token;
+			}
 			case 36: {
 				//double retract here 
 				tb->fwd--; 
@@ -520,27 +609,253 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				token->line_number = line_number;
 
 				return token;
-			}								
+			}	
+			case 37: {
+				if(curr >= 'a' && curr <= 'z'  || curr >= 'A' && curr <= 'Z'){
+					state = 38; 
+					token->lexeme[i++] = curr; 
+				}else{
+					//report an error here
+					state = 1;
+					token->lexeme[i++] = curr; 
+					printf(RED BOLD "Lexical Error invalid function declaration :- %s Line :- %d \n", token->lexeme, 
+					line_number); 					
+				}
+				break;
+			}	
+			case 38: {
+				if(curr >= 'a' && curr <= 'z'  || curr >= 'A' && curr <= 'Z'){
+					state = 38; 
+					token->lexeme[i++] = curr; 
+				}else if((curr - '0') >= 0 && (curr - '0') <= 9){
+					state = 39; 
+					token->lexeme[i++] = curr; 								
+				}else{
+					//go here and then retract and make the token 
+					state = 40;
+				}
+				break;				
+			}	
+			case 39: {
+	            if((curr - '0') >= 0 && (curr - '0') <= 9){
+					state = 39; 
+					token->lexeme[i++] = curr; 	
+				}else{
+					//go to state 40 and make the function token 
+					state = 40; 
+				}	
+				break;			
+			}
+			case 40: {
+				//!how to use the lookup functionality
+				//retract one step
+				tb->fwd--; 
+				state = 1; 
+
+				//also return the token 
+				//? perform a lookup here (not sure)
+				token->lexeme[i] = '\0'; 
+				token->token_type = TK_FUNID;
+				token->line_number = line_number;	
+
+				return token; 
+			}	
+			case 41: {
+				if(curr >= 'a' && curr <= 'z'){
+					state = 42; 
+					token->lexeme[i++] = curr; 
+				}else{
+					//report the lexical error 
+				   //report an error here
+					printf(RED BOLD "Lexical Error invalid record type :- %s Line :- %d \n", token->lexeme, 
+					line_number); 		
+				}
+				break;
+			}
+			case 42: {
+				if(curr >= 'a' && curr <= 'z'){
+					state = 42; 
+					token->lexeme[i++] = curr; 
+				}else{
+					//goto 43 and tetract
+					state = 43;	
+				}
+				break;				
+			}
+			case 43: {
+				tb->fwd--;
+				state = 1; 
+
+				//return token record
+				token->lexeme[i] = '\0'; 
+				token->token_type = TK_RUID;
+				token->line_number = line_number;	
+
+				return token;			
+			}	
+			case 44: {
+				if(curr >= 'a' && curr <='z'){
+					state = 44; 
+					token->lexeme[i++] = curr;
+				}else{
+					//goto 45 and retract
+					state = 45;
+				}
+				break;
+			}	
+			case 45: {
+				tb->fwd--; 
+				state = 1; 
+				//! implement lookup functionality
+
+
+			}
+			case 50: {
+				if((curr - '0') >= 0 && (curr - '0') <= 9){
+					state = 50; 
+					token->lexeme[i++] = curr; 
+				}else if(curr == '.'){
+					state = 52; 
+					token->lexeme[i++] = curr; 
+				}else{
+					state = 51; //retract 
+				}
+				break;
+			}	
+			case 51: {
+				tb->fwd--; 
+				state = 1; 
+				//return token record
+				token->lexeme[i] = '\0'; 
+				token->token_type = TK_NUM;
+				token->line_number = line_number;
+
+				//check if we need to fill the union tyoe 
+				return token;
+			}	
+			case 52: {
+	            if((curr - '0') >= 0 && (curr - '0') <= 9){
+					state = 54; 
+					token->lexeme[i++] = curr; 
+				}else{
+					state = 53; //retract 
+				}
+				break;				
+			}
+			case 53: {
+				//! doubt of what to do
+			}
+			case 54: {
+		        if((curr - '0') >= 0 && (curr - '0') <= 9){
+					state = 55; 
+					token->lexeme[i++] = curr; 
+				}else{
+					//report a lexical error here
+				    printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
+					line_number); 
+				}
+				break;			
+			}
+			case 55:{
+				if(curr == 'E'){
+					state = 57; 
+					token->lexeme[i++] = curr; 
+				}else{
+					state = 56; //retract
+				}
+				break;
+			}
+			case 56: {
+				tb->fwd--; 
+				state = 1; 
+
+				token->lexeme[i] = '\0'; 
+				token->token_type = TK_RNUM;
+				token->line_number = line_number;
+
+				return token;
+			}
+			case 57: {
+				if(curr == '+' || curr == '-'){
+					state = 58; 
+					token->lexeme[i++] = curr; 
+				}else if((curr - '0') >=0 && (curr - '0') <= 9){
+					state = 59; 
+					token->lexeme[i++] = curr; 
+				}else{
+					//report a lexical error here
+				    printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
+					line_number); 					
+				}
+				break;
+			}
+			case 58: {
+		        if((curr - '0') >= 0 && (curr - '0') <= 9){
+					state = 59; 
+					token->lexeme[i++] = curr; 
+				}else{
+					//report a lexical error here
+				    printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
+					line_number); 
+				}
+				break;				
+			}
+			case 59: {
+		        if((curr - '0') >= 0 && (curr - '0') <= 9){
+					state = 60; 
+					token->lexeme[i++] = curr; 
+				}else{
+					//report a lexical error here
+				    printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
+					line_number); 
+				}
+				break;				
+			}
+			case 60: {
+				//! if we get a number here do we have to report a lex error ?
+				int cond = ((curr - '0') >= 0 && (curr - '0') <= 9);
+				printf("cond value is %d \n", cond); 
+				if(cond == 0){
+					printf("going to 61\n");
+					state = 61; 
+				}else{
+					//? error this 
+					// state = 1;
+					printf("not going to 61\n");
+					printf("the fwd is pointing to %c\n", curr); 
+					int fwd_char = tb->buf[tb->fwd % (2 * BUF_SIZE)];
+					printf("fwd is %c \n", fwd_char);
+					int next_fwd = tb->buf[(tb->fwd + 1) % (2 * BUF_SIZE)];
+					printf("nxt fwd is %c \n", next_fwd);
+				    // printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
+					// line_number); 
+				}
+				break;
+			}
+			case 61: {
+				tb->fwd--; 
+				state = 1; 
+
+				token->lexeme[i] = '\0'; 
+				token->token_type = TK_RNUM;
+				token->line_number = line_number;
+
+				return token;
+			}
 			case 404: {
 				//Lexical error state
 
 			}
 		}
-
-		// printf("%c", curr);
-
-		// when curr is EOF then break
-		if (curr == EOF)
-		{
-			return NULL; 
-		}
-        
 		//at the end it is by default forwading
 		tb->fwd++;
+		// printf("the fwd is pointing to %c\n", curr); 
 		checkAndLoadBuffer(tb);
 	}
-
-	return token;
+    
+	//if we are returning from here then token has an error
+	// strcpy(token->lexeme, "error"); 
+	return NULL;
 }
 
 int main()
@@ -567,7 +882,7 @@ int main()
 	// printToken(t2); 
 	while(true){
 		TOKEN* token = getNextToken(&twinBuffer);
-        if(token == NULL){
+        if(token->isEOF){
 			break;
 		}
 		printToken(token); 

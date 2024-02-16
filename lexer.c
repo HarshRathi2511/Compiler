@@ -824,6 +824,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				//! implement lookup functionality
 
 				token->lexeme[i] = '\0'; 
+				token->line_number = line_number;	
 				if(strlen(token->lexeme) > 20){
 					token->token_type = TK_ERROR;
 					char* errorMessage = "Variable Identifier is longer than the prescribed length of 20 characters";
@@ -831,7 +832,6 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					return token;
 				}
 				token->token_type = TK_ID;
-				token->line_number = line_number;	
 
 				return token;
 			}

@@ -5,7 +5,7 @@
 #include "colorCodes.h"
 
 #define BUF_SIZE 512
-#define MAX_LEXEME_SIZE 30
+#define MAX_LEXEME_SIZE 512
 
 typedef struct
 {
@@ -109,9 +109,12 @@ typedef enum TOKEN_TYPE {
 	TK_LE,
 	TK_ASSIGNOP,
 	TK_FUNID,
+	TK_FIELDID,
 	TK_RUID,
+	TK_ID,
 	TK_NUM,
 	TK_RNUM,
+	TK_ERROR
 } TOKEN_TYPE; 
 
 typedef struct TOKEN // Structure of the token
@@ -123,38 +126,46 @@ typedef struct TOKEN // Structure of the token
 	bool isEOF;
 } TOKEN;
 
+const char* token_type_to_string(int token_type) {
+    switch (token_type) {
+        case TK_EQ: return "TK_EQ";
+        case TK_NE: return "TK_NE";
+        case TK_NOT: return "TK_NOT";
+        case TK_AND: return "TK_AND";
+        case TK_OR: return "TK_OR";
+        case TK_PLUS: return "TK_PLUS";
+        case TK_MINUS: return "TK_MINUS";
+        case TK_MUL: return "TK_MUL";
+        case TK_DIV: return "TK_DIV";
+        case TK_DOT: return "TK_DOT";
+        case TK_COMMA: return "TK_COMMA";
+        case TK_COLON: return "TK_COLON";
+        case TK_SEM: return "TK_SEM";
+        case TK_CL: return "TK_CL";
+        case TK_OP: return "TK_OP";
+        case TK_SQR: return "TK_SQR";
+        case TK_SQL: return "TK_SQL";
+        case TK_COMMENT: return "TK_COMMENT";
+        case TK_GT: return "TK_GT";
+        case TK_GE: return "TK_GE";
+        case TK_LT: return "TK_LT";
+        case TK_LE: return "TK_LE";
+        case TK_ASSIGNOP: return "TK_ASSIGNOP";
+        case TK_FUNID: return "TK_FUNID";
+        case TK_FIELDID: return "TK_FIELDID";
+        case TK_RUID: return "TK_RUID";
+        case TK_ID: return "TK_ID";
+        case TK_NUM: return "TK_NUM";
+        case TK_RNUM: return "TK_RNUM";
+        default: return "UNKNOWN";
+    }
+}
 void printToken(const TOKEN *token) {
-    printf(GREEN "Token Type: ");
-    if (token->token_type == TK_EQ) printf("TK_EQ");
-    else if (token->token_type == TK_NE) printf("TK_NE");
-    else if (token->token_type == TK_NOT) printf("TK_NOT");
-    else if (token->token_type == TK_AND) printf("TK_AND");
-    else if (token->token_type == TK_OR) printf("TK_OR");
-    else if (token->token_type == TK_PLUS) printf("TK_PLUS");
-    else if (token->token_type == TK_MINUS) printf("TK_MINUS");
-    else if (token->token_type == TK_MUL) printf("TK_MUL");
-    else if (token->token_type == TK_DIV) printf("TK_DIV");
-    else if (token->token_type == TK_DOT) printf("TK_DOT");
-    else if (token->token_type == TK_COMMA) printf("TK_COMMA");
-    else if (token->token_type == TK_COLON) printf("TK_COLON");
-    else if (token->token_type == TK_SEM) printf("TK_SEM");
-    else if (token->token_type == TK_CL) printf("TK_CL");
-    else if (token->token_type == TK_OP) printf("TK_OP");
-    else if (token->token_type == TK_SQR) printf("TK_SQR");
-    else if (token->token_type == TK_SQL) printf("TK_SQL");
-    else if (token->token_type == TK_COMMENT) printf("TK_COMMENT");
-    else if (token->token_type == TK_GT) printf("TK_GT");
-    else if (token->token_type == TK_GE) printf("TK_GE");
-    else if (token->token_type == TK_LT) printf("TK_LT");
-    else if (token->token_type == TK_LE) printf("TK_LE");
-    else if (token->token_type == TK_ASSIGNOP) printf("TK_ASSIGNOP");
-    else if (token->token_type == TK_FUNID) printf("TK_FUNID");
-    else if (token->token_type == TK_RUID) printf("TK_RUID");
-    else if (token->token_type == TK_NUM) printf("TK_NUM");
-    else if (token->token_type == TK_RNUM) printf("TK_RNUM");
-    
-    printf("\nLexeme: %s\n", token->lexeme);
-    printf("Line Number: %u\n", token->line_number);
+	if(token->token_type == TK_ERROR){
+		printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
+	}else{
+	   printf(GREEN"Line Number: %u    Lexeme %s    Token %s \n", token->line_number, token->lexeme, token_type_to_string(token->token_type));
+	}
     printf("\n"); 
 }
 
@@ -235,6 +246,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else if(curr == '%'){
 					state = 25; 
+					token->lexeme[i++] = curr; 
 					//no need for a lexeme here as ignore comments
 				}else if(curr == '>'){
 					state = 27; 
@@ -252,12 +264,16 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				//! need to fix 44 and 46
 				else if(curr == 'a' || curr >= 'e' && curr <= 'z'){
 					state = 44; 
+					//token->lexeme[i++]='\0';
 					token->lexeme[i++] = curr; 
 				}else if(curr >= 'b' && curr <= 'd'){
 					state = 46; 
 					token->lexeme[i++] = curr;
 				}else if((curr - '0') >= 0 && (curr - '0') <= 9){
 					state = 50; 
+					token->lexeme[i++] = curr; 
+				}else{
+					state = 404; 
 					token->lexeme[i++] = curr; 
 				}
 				
@@ -270,10 +286,11 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else{
 					//break into error 
-					//report lexical error
-					// state = 1; 
-					printf(RED BOLD "Lexical case 2 Error :- cant use = like this %s Line :- %d \n", token->lexeme, 
-					line_number); 
+					state = 1; 
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					strcpy(token->lexeme, "Unknown symbol <=>");
+					return token;
 				}	
 				break;			
 			}
@@ -291,10 +308,12 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					state = 5; 
 					token->lexeme[i++] = curr; 
 				}else{
-					//report lexical error
+					//break into error 
 					state = 1; 
-					printf(RED BOLD "Lexical Error :- cant use = like this %s Line :- %d \n", token->lexeme, 
-					line_number); 
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					strcpy(token->lexeme, "Unknown symbol <!>");
+					return token;
 				}
 				break; 
 			}
@@ -322,6 +341,12 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else{
 					//report lexical error 
+					//break into error 
+					state = 1; 
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					strcpy(token->lexeme, "Unknown symbol <&>");
+					return token;
 				}
 				break;
 			}
@@ -330,10 +355,12 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					state = 9; 
 					token->lexeme[i++] = curr; 
 				}else{
-					//report lexical error 
+					//break into error 
 					state = 1; 
-					printf(RED BOLD "Lexical Error invalid &&& :- %s Line :- %d \n", token->lexeme, 
-					line_number); 
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					strcpy(token->lexeme, "Unknown symbol <&&>");
+					return token;
 				}
 				break;
 			}
@@ -351,7 +378,12 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					state = 11; 
 					token->lexeme[i++] = curr; 
 				}else{
-					//report lexical error 
+					//break into error 
+					state = 1; 
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					strcpy(token->lexeme, "Unknown symbol <@>");
+					return token; 
 				}
 				break;
 			}
@@ -360,9 +392,12 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					state = 12; 
 					token->lexeme[i++] = curr; 
 				}else{
-					//report lexical error 
-					printf(RED BOLD "Lexical Error invalid @@@ :- %s Line :- %d \n", token->lexeme, 
-					line_number); 
+					//break into error 
+					state = 1; 
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					strcpy(token->lexeme, "Unknown symbol <@@>");
+					return token; 
 				}
 				break;
 			}
@@ -486,8 +521,13 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				}else{
 					//when we found a new line 
 					//retract one step 
-					tb->fwd--; //to re read the \n again as single point of updation of line number
+					// tb->fwd--; //to re read the \n again as single point of updation of line number
 					state = 1; //re read the \n again 
+
+				    strcpy(token->lexeme, "%"); 
+					token->token_type = TK_COMMENT;
+					token->line_number = line_number;
+					return token;
 				}
 				break;
 			}
@@ -496,13 +536,6 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					state = 29; 
 					token->lexeme[i++] = curr; 
 				}else{
-					//! take care of the case where the other character read is \n
-					//i.e 
-					// > 
-					// a
-					// if(curr == '\n'){
-					// 	line_number++;
-					// }
 					state = 28; 
 					//dont store the other character in the lexeme 
 				}
@@ -530,7 +563,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				return token;
 			}	
 			case 30: {
-				printf("in case 30");
+				//printf("in case 30");
 				if(curr == '='){
 					state = 32; 
 					token->lexeme[i++] = curr; 
@@ -580,8 +613,12 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					state = 35; 
 				}else{
 					//report a lexical error
-					printf(RED BOLD "Lexical Error invalid assign op :- %s Line :- %d \n", token->lexeme, 
-					line_number); 
+					//break into error 
+					state = 1; 
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					strcpy(token->lexeme, "Unknown symbol < <-- >");
+					return token; 
 				}
 				break;
 			}
@@ -614,12 +651,17 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				if(curr >= 'a' && curr <= 'z'  || curr >= 'A' && curr <= 'Z'){
 					state = 38; 
 					token->lexeme[i++] = curr; 
-				}else{
-					//report an error here
-					state = 1;
-					token->lexeme[i++] = curr; 
-					printf(RED BOLD "Lexical Error invalid function declaration :- %s Line :- %d \n", token->lexeme, 
-					line_number); 					
+				}else{	
+					//! break into error 
+					//! this might take some more space
+					state = 1; 
+					token->lexeme[i] = '\0';
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					char* errorMessage = malloc(sizeof(char) * 100);
+					sprintf(errorMessage, "Unknown pattern <%s>", token->lexeme); 
+					strcpy(token->lexeme,errorMessage);
+					return token; 			
 				}
 				break;
 			}	
@@ -651,13 +693,17 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				//retract one step
 				tb->fwd--; 
 				state = 1; 
-
 				//also return the token 
 				//? perform a lookup here (not sure)
 				token->lexeme[i] = '\0'; 
+				token->line_number = line_number;
+				if(strlen(token->lexeme) > 30){
+					token->token_type = TK_ERROR;
+					char* errorMessage = "Function Identifier is longer than the prescribed length of 30 characters";
+					strcpy(token->lexeme,errorMessage);
+					return token;
+				}
 				token->token_type = TK_FUNID;
-				token->line_number = line_number;	
-
 				return token; 
 			}	
 			case 41: {
@@ -665,10 +711,15 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					state = 42; 
 					token->lexeme[i++] = curr; 
 				}else{
-					//report the lexical error 
-				   //report an error here
-					printf(RED BOLD "Lexical Error invalid record type :- %s Line :- %d \n", token->lexeme, 
-					line_number); 		
+					//break into error 
+					state = 1; 
+					token->lexeme[i] = '\0';
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					char* errorMessage = malloc(sizeof(char) * 100);
+					sprintf(errorMessage, "Unknown pattern <%s>", token->lexeme); 
+					strcpy(token->lexeme,errorMessage);
+					return token; 	
 				}
 				break;
 			}
@@ -708,8 +759,83 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				state = 1; 
 				//! implement lookup functionality
 
+				token->lexeme[i] = '\0'; 
+				token->token_type = TK_FIELDID;
+				token->line_number = line_number;	
+
+				return token;	
+
 
 			}
+			case 46:{
+				if(curr >= 'a' && curr <='z'){
+					state = 44; 
+					token->lexeme[i++] = curr;
+				}else if ((curr - '0') >= 2 && (curr - '0') <= 7){
+					
+					state = 47;
+					token->lexeme[i++] = curr;
+				}else{
+					state= 63; // go to 63 and retract
+				}
+				break;
+			}
+			case 63:{
+				tb->fwd--; 
+				state = 1; 
+				//! implement lookup functionality
+
+				token->lexeme[i] = '\0'; 
+				token->token_type = TK_FIELDID;
+				token->line_number = line_number;	
+
+				return token;	
+			}
+			case 47: {
+				if(curr >= 'b' && curr <='d'){
+					state = 47; 
+					token->lexeme[i++] = curr;
+				}else if ((curr - '0') >= 2 && (curr - '0') <= 7){
+					
+					state = 48;
+					token->lexeme[i++] = curr;
+				}else{
+					state= 49; // go to 49 and retract
+				}
+
+				break;
+
+			}
+			case 48: {
+				if ((curr - '0') >= 2 && (curr - '0') <= 7){
+					
+					state = 48;
+					token->lexeme[i++] = curr;
+				}else{
+					state= 49; // go to 49 and retract
+				}
+
+				break;
+
+			}
+			case 49 : {
+				tb->fwd--; 
+				state = 1; 
+				//! implement lookup functionality
+
+				token->lexeme[i] = '\0'; 
+				if(strlen(token->lexeme) > 20){
+					token->token_type = TK_ERROR;
+					char* errorMessage = "Variable Identifier is longer than the prescribed length of 20 characters";
+					strcpy(token->lexeme,errorMessage);
+					return token;
+				}
+				token->token_type = TK_ID;
+				token->line_number = line_number;	
+
+				return token;
+			}
+
 			case 50: {
 				if((curr - '0') >= 0 && (curr - '0') <= 9){
 					state = 50; 
@@ -743,16 +869,32 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				break;				
 			}
 			case 53: {
-				//! doubt of what to do
+				//double retract here 
+				tb->fwd--; 
+				tb->fwd--; 
+
+				state = 1;
+                
+				//also remove one char from the lexeme
+				token->lexeme[--i] = '\0'; 
+				token->token_type = TK_NUM;
+				token->line_number = line_number;
+
+				return token;				
 			}
 			case 54: {
 		        if((curr - '0') >= 0 && (curr - '0') <= 9){
 					state = 55; 
 					token->lexeme[i++] = curr; 
 				}else{
-					//report a lexical error here
-				    printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
-					line_number); 
+					state = 1; 
+					token->lexeme[i] = '\0';
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					char* errorMessage = malloc(sizeof(char) * 100);
+					sprintf(errorMessage, "Unknown pattern <%s>", token->lexeme); 
+					strcpy(token->lexeme,errorMessage);
+					return token; 	
 				}
 				break;			
 			}
@@ -784,8 +926,14 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else{
 					//report a lexical error here
-				    printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
-					line_number); 					
+					state = 1; 
+					token->lexeme[i] = '\0';
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					char* errorMessage = malloc(sizeof(char) * 100);
+					sprintf(errorMessage, "Unknown pattern <%s>", token->lexeme); 
+					strcpy(token->lexeme,errorMessage);
+					return token; 				
 				}
 				break;
 			}
@@ -795,8 +943,14 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else{
 					//report a lexical error here
-				    printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
-					line_number); 
+					state = 1; 
+					token->lexeme[i] = '\0';
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					char* errorMessage = malloc(sizeof(char) * 100);
+					sprintf(errorMessage, "Unknown pattern <%s>", token->lexeme); 
+					strcpy(token->lexeme,errorMessage);
+					return token; 
 				}
 				break;				
 			}
@@ -806,29 +960,24 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					token->lexeme[i++] = curr; 
 				}else{
 					//report a lexical error here
-				    printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
-					line_number); 
+					state = 1; 
+					token->lexeme[i] = '\0';
+					token->line_number = line_number; 
+					token->token_type = TK_ERROR; 
+					char* errorMessage = malloc(sizeof(char) * 100);
+					sprintf(errorMessage, "Unknown pattern <%s>", token->lexeme); 
+					strcpy(token->lexeme,errorMessage);
+					return token; 
 				}
 				break;				
 			}
 			case 60: {
 				//! if we get a number here do we have to report a lex error ?
-				int cond = ((curr - '0') >= 0 && (curr - '0') <= 9);
-				printf("cond value is %d \n", cond); 
-				if(cond == 0){
-					printf("going to 61\n");
+				if(((curr - '0') >= 0 && (curr - '0') <= 9) == 0){
 					state = 61; 
 				}else{
 					//? error this 
-					// state = 1;
-					printf("not going to 61\n");
-					printf("the fwd is pointing to %c\n", curr); 
-					int fwd_char = tb->buf[tb->fwd % (2 * BUF_SIZE)];
-					printf("fwd is %c \n", fwd_char);
-					int next_fwd = tb->buf[(tb->fwd + 1) % (2 * BUF_SIZE)];
-					printf("nxt fwd is %c \n", next_fwd);
-				    // printf(RED BOLD "Lexical Error number bt :- %s Line :- %d \n", token->lexeme, 
-					// line_number); 
+					state = 61;
 				}
 				break;
 			}
@@ -842,13 +991,36 @@ TOKEN *getNextToken(TwinBuffer *tb)
 
 				return token;
 			}
-			case 404: {
-				//Lexical error state
 
+			case 404:{
+				//report a lexical error here
+				state = 1; 
+				token->lexeme[i] = '\0';
+				token->line_number = line_number; 
+				token->token_type = TK_ERROR; 
+				char* errorMessage = malloc(sizeof(char) * 100);
+				sprintf(errorMessage, "Unknown pattern <%s>", token->lexeme); 
+				strcpy(token->lexeme,errorMessage);
+				return token; 
+			}
+
+			default: {
+				// //when we read anything other than the above mentioned characters
+				// 				//report a lexical error here
+				// state = 1; 
+				// token->lexeme[i] = '\0';
+				// token->line_number = line_number; 
+				// token->token_type = TK_ERROR; 
+				// char* errorMessage = malloc(sizeof(char) * 100);
+				// sprintf(errorMessage, "Unknown pattern <%s>", token->lexeme); 
+				// strcpy(token->lexeme,errorMessage);
+				// return token; 
+				// break; 
 			}
 		}
 		//at the end it is by default forwading
 		tb->fwd++;
+		
 		// printf("the fwd is pointing to %c\n", curr); 
 		checkAndLoadBuffer(tb);
 	}
@@ -861,7 +1033,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 int main()
 {
 	TwinBuffer twinBuffer;
-	FILE *inputFile = fopen("test.txt", "r");
+	FILE *inputFile = fopen("t1.txt", "r");
 	if (inputFile == NULL)
 	{
 		fprintf(stderr, "Error opening input file.\n");

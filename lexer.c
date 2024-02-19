@@ -7,19 +7,80 @@
 #define BUF_SIZE 512
 #define MAX_LEXEME_SIZE 512
 
+typedef enum TOKEN_TYPE {
+	TK_EQ, 
+	TK_NE,
+	TK_NOT,
+	TK_AND,
+	TK_OR, 
+	TK_PLUS,
+	TK_MINUS,
+	TK_MUL, 
+	TK_DIV,
+	TK_DOT,
+	TK_COMMA,
+	TK_COLON,
+	TK_SEM,
+	TK_CL, 
+	TK_OP,
+	TK_SQR,
+	TK_SQL,
+	TK_COMMENT,
+	TK_GT,
+	TK_GE,
+	TK_LT,
+	TK_LE,
+	TK_ASSIGNOP,
+	TK_FUNID,
+	TK_FIELDID,
+	TK_RUID,
+	TK_ID,
+	TK_NUM,
+	TK_RNUM,
+	TK_ERROR,
+	TK_ELSE,
+    TK_ENDRECORD,
+    TK_RECORD,
+    TK_WITH,
+    TK_PARAMETERS,
+    TK_END,
+    TK_WHILE,
+    TK_UNION,
+    TK_ENDUNION,
+    TK_DEFINETYPE,
+    TK_AS,
+    TK_TYPE,
+    TK_MAIN,
+    TK_GLOBAL,
+    TK_PARAMETER,
+    TK_LIST,
+    TK_INPUT,
+    TK_OUTPUT,
+    TK_INT,
+    TK_REAL,
+    TK_IF,
+    TK_THEN,
+    TK_ENDWHILE,
+    TK_ENDIF,
+    TK_READ,
+    TK_WRITE,
+    TK_RETURN,
+    TK_CALL,
+	TK_UNKNOWN
+} TOKEN_TYPE; 
+
 //hash 
 
 #define HASH_TABLE_SIZE 100
-
 typedef struct Entry {
     char* key;
-    char* value;
+    TOKEN_TYPE value;
     struct Entry* next;
 } Entry;
 
 Entry* hashTable[HASH_TABLE_SIZE];
 
-//hash function
+// Hash function
 unsigned int hash(char* key) {
     unsigned int hashValue = 0;
     for (int i = 0; key[i]; i++) {
@@ -28,13 +89,13 @@ unsigned int hash(char* key) {
     return hashValue % HASH_TABLE_SIZE;
 }
 
-//insert
-void insert(char* key, char* value) {
+// Insert into hash table
+void insert(char* key, TOKEN_TYPE value) {
     unsigned int index = hash(key);
 
     Entry* newEntry = (Entry*)malloc(sizeof(Entry));
     newEntry->key = strdup(key);
-    newEntry->value = strdup(value);
+    newEntry->value = value;
     newEntry->next = NULL;
 
     // Insert at beginning(if no collision), else add to list
@@ -60,35 +121,36 @@ Entry* search(char* key) {
     return NULL;
 }
 
+
 void AddtoHashTable(){
-    insert("else", "TK_ELSE");
-    insert("endrecord", "TK_ENDRECORD");
-    insert("record", "TK_RECORD");
-    insert("with", "TK_WITH");
-    insert("parameters", "TK_PARAMETERS");
-    insert("end", "TK_END");
-    insert("while", "TK_WHILE");
-    insert("union", "TK_UNION");
-    insert("endunion", "TK_ENDUNION");
-    insert("definetype", "TK_DEFINETYPE");
-    insert("as", "TK_AS");
-    insert("type", "TK_TYPE");
-    insert("_main", "TK_MAIN");
-    insert("global", "TK_GLOBAL");
-    insert("parameter", "TK_PARAMETER");
-    insert("list", "TK_LIST");
-    insert("input", "TK_INPUT");
-    insert("output", "TK_OUTPUT");
-    insert("int", "TK_INT");
-    insert("real", "TK_REAL");
-    insert("if", "TK_IF");
-    insert("then", "TK_THEN");
-    insert("endwhile", "TK_ENDWHILE");
-    insert("endif", "TK_ENDIF");
-    insert("read", "TK_READ");
-    insert("write", "TK_WRITE");
-    insert("return", "TK_RETURN");
-    insert("call", "TK_CALL");
+	insert("else", TK_ELSE);
+	insert("endrecord", TK_ENDRECORD);
+	insert("record", TK_RECORD);
+	insert("with", TK_WITH);
+	insert("parameters", TK_PARAMETERS);
+	insert("end", TK_END);
+	insert("while", TK_WHILE);
+	insert("union", TK_UNION);
+	insert("endunion", TK_ENDUNION);
+	insert("definetype", TK_DEFINETYPE);
+	insert("as", TK_AS);
+	insert("type", TK_TYPE);
+	insert("_main", TK_MAIN);
+	insert("global", TK_GLOBAL);
+	insert("parameter", TK_PARAMETER);
+	insert("list", TK_LIST);
+	insert("input", TK_INPUT);
+	insert("output", TK_OUTPUT);
+	insert("int", TK_INT);
+	insert("real", TK_REAL);
+	insert("if", TK_IF);
+	insert("then", TK_THEN);
+	insert("endwhile", TK_ENDWHILE);
+	insert("endif", TK_ENDIF);
+	insert("read", TK_READ);
+	insert("write", TK_WRITE);
+	insert("return", TK_RETURN);
+	insert("call", TK_CALL);
 }
 
 
@@ -171,38 +233,7 @@ typedef union TOKEN_VAL // Value field of the Token is any of these
 	double realnumber;
 } TOKEN_VAL;
 
-typedef enum TOKEN_TYPE {
-	TK_EQ, 
-	TK_NE,
-	TK_NOT,
-	TK_AND,
-	TK_OR, 
-	TK_PLUS,
-	TK_MINUS,
-	TK_MUL, 
-	TK_DIV,
-	TK_DOT,
-	TK_COMMA,
-	TK_COLON,
-	TK_SEM,
-	TK_CL, 
-	TK_OP,
-	TK_SQR,
-	TK_SQL,
-	TK_COMMENT,
-	TK_GT,
-	TK_GE,
-	TK_LT,
-	TK_LE,
-	TK_ASSIGNOP,
-	TK_FUNID,
-	TK_FIELDID,
-	TK_RUID,
-	TK_ID,
-	TK_NUM,
-	TK_RNUM,
-	TK_ERROR
-} TOKEN_TYPE; 
+
 
 typedef struct TOKEN // Structure of the token
 {   
@@ -212,9 +243,8 @@ typedef struct TOKEN // Structure of the token
 	TOKEN_VAL token_value;
 	bool isEOF;
 } TOKEN;
-
-const char* token_type_to_string(int token_type) {
-    switch (token_type) {
+const char* token_type_to_string(TOKEN_TYPE token) {
+    switch(token) {
         case TK_EQ: return "TK_EQ";
         case TK_NE: return "TK_NE";
         case TK_NOT: return "TK_NOT";
@@ -244,8 +274,98 @@ const char* token_type_to_string(int token_type) {
         case TK_ID: return "TK_ID";
         case TK_NUM: return "TK_NUM";
         case TK_RNUM: return "TK_RNUM";
+        case TK_ERROR: return "TK_ERROR";
+        case TK_ELSE: return "TK_ELSE";
+        case TK_ENDRECORD: return "TK_ENDRECORD";
+        case TK_RECORD: return "TK_RECORD";
+        case TK_WITH: return "TK_WITH";
+        case TK_PARAMETERS: return "TK_PARAMETERS";
+        case TK_END: return "TK_END";
+        case TK_WHILE: return "TK_WHILE";
+        case TK_UNION: return "TK_UNION";
+        case TK_ENDUNION: return "TK_ENDUNION";
+        case TK_DEFINETYPE: return "TK_DEFINETYPE";
+        case TK_AS: return "TK_AS";
+        case TK_TYPE: return "TK_TYPE";
+        case TK_MAIN: return "TK_MAIN";
+        case TK_GLOBAL: return "TK_GLOBAL";
+        case TK_PARAMETER: return "TK_PARAMETER";
+        case TK_LIST: return "TK_LIST";
+        case TK_INPUT: return "TK_INPUT";
+        case TK_OUTPUT: return "TK_OUTPUT";
+        case TK_INT: return "TK_INT";
+        case TK_REAL: return "TK_REAL";
+        case TK_IF: return "TK_IF";
+        case TK_THEN: return "TK_THEN";
+        case TK_ENDWHILE: return "TK_ENDWHILE";
+        case TK_ENDIF: return "TK_ENDIF";
+        case TK_READ: return "TK_READ";
+        case TK_WRITE: return "TK_WRITE";
+        case TK_RETURN: return "TK_RETURN";
+        case TK_CALL: return "TK_CALL";
         default: return "UNKNOWN";
     }
+}
+
+TOKEN_TYPE string_to_token_type(const char* str) {
+    if (strcmp(str, "TK_EQ") == 0) return TK_EQ;
+    if (strcmp(str, "TK_NE") == 0) return TK_NE;
+    if (strcmp(str, "TK_NOT") == 0) return TK_NOT;
+    if (strcmp(str, "TK_AND") == 0) return TK_AND;
+    if (strcmp(str, "TK_OR") == 0) return TK_OR;
+    if (strcmp(str, "TK_PLUS") == 0) return TK_PLUS;
+    if (strcmp(str, "TK_MINUS") == 0) return TK_MINUS;
+    if (strcmp(str, "TK_MUL") == 0) return TK_MUL;
+    if (strcmp(str, "TK_DIV") == 0) return TK_DIV;
+    if (strcmp(str, "TK_DOT") == 0) return TK_DOT;
+    if (strcmp(str, "TK_COMMA") == 0) return TK_COMMA;
+    if (strcmp(str, "TK_COLON") == 0) return TK_COLON;
+    if (strcmp(str, "TK_SEM") == 0) return TK_SEM;
+    if (strcmp(str, "TK_CL") == 0) return TK_CL;
+    if (strcmp(str, "TK_OP") == 0) return TK_OP;
+    if (strcmp(str, "TK_SQR") == 0) return TK_SQR;
+    if (strcmp(str, "TK_SQL") == 0) return TK_SQL;
+    if (strcmp(str, "TK_COMMENT") == 0) return TK_COMMENT;
+    if (strcmp(str, "TK_GT") == 0) return TK_GT;
+    if (strcmp(str, "TK_GE") == 0) return TK_GE;
+    if (strcmp(str, "TK_LT") == 0) return TK_LT;
+    if (strcmp(str, "TK_LE") == 0) return TK_LE;
+    if (strcmp(str, "TK_ASSIGNOP") == 0) return TK_ASSIGNOP;
+    if (strcmp(str, "TK_FUNID") == 0) return TK_FUNID;
+    if (strcmp(str, "TK_FIELDID") == 0) return TK_FIELDID;
+    if (strcmp(str, "TK_RUID") == 0) return TK_RUID;
+    if (strcmp(str, "TK_ID") == 0) return TK_ID;
+    if (strcmp(str, "TK_NUM") == 0) return TK_NUM;
+    if (strcmp(str, "TK_RNUM") == 0) return TK_RNUM;
+    if (strcmp(str, "TK_ELSE") == 0) return TK_ELSE;
+    if (strcmp(str, "TK_ENDRECORD") == 0) return TK_ENDRECORD;
+    if (strcmp(str, "TK_RECORD") == 0) return TK_RECORD;
+    if (strcmp(str, "TK_WITH") == 0) return TK_WITH;
+    if (strcmp(str, "TK_PARAMETERS") == 0) return TK_PARAMETERS;
+    if (strcmp(str, "TK_END") == 0) return TK_END;
+    if (strcmp(str, "TK_WHILE") == 0) return TK_WHILE;
+    if (strcmp(str, "TK_UNION") == 0) return TK_UNION;
+    if (strcmp(str, "TK_ENDUNION") == 0) return TK_ENDUNION;
+    if (strcmp(str, "TK_DEFINETYPE") == 0) return TK_DEFINETYPE;
+    if (strcmp(str, "TK_AS") == 0) return TK_AS;
+    if (strcmp(str, "TK_TYPE") == 0) return TK_TYPE;
+    if (strcmp(str, "TK_MAIN") == 0) return TK_MAIN;
+    if (strcmp(str, "TK_GLOBAL") == 0) return TK_GLOBAL;
+    if (strcmp(str, "TK_PARAMETER") == 0) return TK_PARAMETER;
+    if (strcmp(str, "TK_LIST") == 0) return TK_LIST;
+    if (strcmp(str, "TK_INPUT") == 0) return TK_INPUT;
+    if (strcmp(str, "TK_OUTPUT") == 0) return TK_OUTPUT;
+    if (strcmp(str, "TK_INT") == 0) return TK_INT;
+    if (strcmp(str, "TK_REAL") == 0) return TK_REAL;
+    if (strcmp(str, "TK_IF") == 0) return TK_IF;
+    if (strcmp(str, "TK_THEN") == 0) return TK_THEN;
+    if (strcmp(str, "TK_ENDWHILE") == 0) return TK_ENDWHILE;
+    if (strcmp(str, "TK_ENDIF") == 0) return TK_ENDIF;
+    if (strcmp(str, "TK_READ") == 0) return TK_READ;
+    if (strcmp(str, "TK_WRITE") == 0) return TK_WRITE;
+    if (strcmp(str, "TK_RETURN") == 0) return TK_RETURN;
+    if (strcmp(str, "TK_CALL") == 0) return TK_CALL;
+    return TK_UNKNOWN;
 }
 void printToken(const TOKEN *token) {
 	if(token->token_type == TK_ERROR){
@@ -797,7 +917,16 @@ TOKEN *getNextToken(TwinBuffer *tb)
 					strcpy(token->lexeme,errorMessage);
 					return token;
 				}
-				token->token_type = TK_FUNID;
+
+				Entry* e = search(token->lexeme);
+
+				if(e != NULL){
+					token->token_type = e->value; 
+				}else{
+					//also insert 
+					token->token_type = TK_FUNID;
+					insert(token->lexeme, token->token_type);
+				}
 				return token; 
 			}	
 			case 41: {
@@ -853,13 +982,21 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				state = 1; 
 				//! implement lookup functionality
 
+
 				token->lexeme[i] = '\0'; 
-				token->token_type = TK_FIELDID;
-				token->line_number = line_number;	
+				token->line_number = line_number;
+
+				Entry* e = search(token->lexeme);
+
+				if(e != NULL){
+					token->token_type = e->value; 
+				}else{
+					//also insert 
+					token->token_type = TK_FIELDID;
+					insert(token->lexeme, token->token_type);
+				}	
 
 				return token;	
-
-
 			}
 			case 46:{
 				if(curr >= 'a' && curr <='z'){

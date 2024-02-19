@@ -1083,6 +1083,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				tb->fwd--; 
 				state = 1; 
 				//return token record
+				//!store the token value for next stage
 				token->lexeme[i] = '\0'; 
 				token->token_type = TK_NUM;
 				token->line_number = line_number;
@@ -1105,7 +1106,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 				tb->fwd--; 
 
 				state = 1;
-                
+                //!store the token value for next stage
 				//also remove one char from the lexeme
 				token->lexeme[--i] = '\0'; 
 				token->token_type = TK_NUM;
@@ -1141,7 +1142,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 			case 56: {
 				tb->fwd--; 
 				state = 1; 
-
+                //!store the token value for next stage
 				token->lexeme[i] = '\0'; 
 				token->token_type = TK_RNUM;
 				token->line_number = line_number;

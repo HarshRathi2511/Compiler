@@ -12,5 +12,5 @@
 #define BOLD		"\e[1m"
 #define ITALICS		"\e[3m"
 #define UNDERLINE	"\e[4m"
-
+//
 #endif

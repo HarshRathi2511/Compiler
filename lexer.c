@@ -1,83 +1,70 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include "colorCodes.h"
+#include "color.h"
 
-#define BUF_SIZE 512
-#define MAX_LEXEME_SIZE 512
+#include "lexerDef.h"
 
-typedef enum TOKEN_TYPE {
-	TK_EQ, 
-	TK_NE,
-	TK_NOT,
-	TK_AND,
-	TK_OR, 
-	TK_PLUS,
-	TK_MINUS,
-	TK_MUL, 
-	TK_DIV,
-	TK_DOT,
-	TK_COMMA,
-	TK_COLON,
-	TK_SEM,
-	TK_CL, 
-	TK_OP,
-	TK_SQR,
-	TK_SQL,
-	TK_COMMENT,
-	TK_GT,
-	TK_GE,
-	TK_LT,
-	TK_LE,
-	TK_ASSIGNOP,
-	TK_FUNID,
-	TK_FIELDID,
-	TK_RUID,
-	TK_ID,
-	TK_NUM,
-	TK_RNUM,
-	TK_ERROR,
-	TK_ELSE,
-    TK_ENDRECORD,
-    TK_RECORD,
-    TK_WITH,
-    TK_PARAMETERS,
-    TK_END,
-    TK_WHILE,
-    TK_UNION,
-    TK_ENDUNION,
-    TK_DEFINETYPE,
-    TK_AS,
-    TK_TYPE,
-    TK_MAIN,
-    TK_GLOBAL,
-    TK_PARAMETER,
-    TK_LIST,
-    TK_INPUT,
-    TK_OUTPUT,
-    TK_INT,
-    TK_REAL,
-    TK_IF,
-    TK_THEN,
-    TK_ENDWHILE,
-    TK_ENDIF,
-    TK_READ,
-    TK_WRITE,
-    TK_RETURN,
-    TK_CALL,
-	TK_UNKNOWN
-} TOKEN_TYPE; 
+// REMOVING COMMENTS 
+char *Find_Comment_Symbol( char comment, const char *readBuffer) {
+    int counter =0;
+    while (*readBuffer != '\0') {
+        int counter_two=1;
+        if(counter!=0){
+            counter--;
+            counter_two++;    
+        }
+        if (*readBuffer == comment) {
+            return (char *)readBuffer;
+        }
+        counter++;
+        readBuffer++;
+        counter_two++;
+    }
+    counter++;
+    return NULL;
+}
 
-//hash 
 
-#define HASH_TABLE_SIZE 100
-typedef struct Entry {
-    char* key;
-    TOKEN_TYPE value;
-    struct Entry* next;
-} Entry;
+void Remove_Comments(const char *TestCaseFile, const char *CleanTestCaseFile) {
+    
+    FILE *out = fopen(CleanTestCaseFile, "w");
+    FILE *in = fopen(TestCaseFile, "r");
+    char readBuffer[len];
 
+    if (in == NULL) {
+        printf("Input File Opening Error.\n");
+        exit(1);
+    }
+    if (out == NULL) {
+        printf("Output File Opening Error.\n");
+        exit(1);
+    }
+
+    while (fgets(readBuffer, sizeof(readBuffer), in) != NULL) {
+        // find a % (comment symbol) by traversing 
+		char *comment_sign;
+		int no=1;
+		char comment[2000];
+        char *com_ptr = Find_Comment_Symbol( '%', readBuffer); 
+		comment_sign="%";
+		if(comment_sign!="%"){
+			//comment="\n";
+			break;	
+		}
+        if (com_ptr != NULL) {
+            // if % exists, replace everything after that symbol with \n 
+			no++;
+            *com_ptr = '\n';
+            *(com_ptr + 1) = '\0';
+        }
+        no--;
+        fprintf(out, "%s", readBuffer);
+        printf("%s", readBuffer);
+    }
+
+    fclose(in);
+    fclose(out);
+}
+
+//MAKING OF SYMBOL TABLE AND INSERTING KEYWORDS INTO IT 
 Entry* hashTable[HASH_TABLE_SIZE];
 
 // Hash function
@@ -156,14 +143,6 @@ void AddtoHashTable(){
 
 //endhash
 
-typedef struct
-{
-	char *buf;
-	int init;
-	int fwd;
-	int lastBufLoad;
-	FILE *fp;
-} TwinBuffer;
 
 void initTwinBuffer(TwinBuffer *tb)
 {
@@ -226,23 +205,15 @@ int setupLexer(TwinBuffer *tb, FILE *fp)
 }
 
 // token struct
-typedef union TOKEN_VAL // Value field of the Token is any of these
-{
-
-	int number;
-	double realnumber;
-} TOKEN_VAL;
-
+// typedef union TOKEN_VAL // Value field of the Token is any of these
+// {
+// 	int number;
+// 	double realnumber;
+// } TOKEN_VAL;
 
 
-typedef struct TOKEN // Structure of the token
-{   
-	TOKEN_TYPE token_type; 
-	char lexeme[MAX_LEXEME_SIZE]; // DOUBT
-	unsigned int line_number;
-	TOKEN_VAL token_value;
-	bool isEOF;
-} TOKEN;
+
+
 const char* token_type_to_string(TOKEN_TYPE token) {
     switch(token) {
         case TK_EQ: return "TK_EQ";
@@ -371,7 +342,7 @@ void printToken(const TOKEN *token) {
 	if(token->token_type == TK_ERROR){
 		printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
 	}else{
-	   printf(GREEN"Line Number: %u    Lexeme %s    Token %s \n", token->line_number, token->lexeme, token_type_to_string(token->token_type));
+	   printf(GREEN "Line Number: %u    Lexeme %s    Token %s \n", token->line_number, token->lexeme, token_type_to_string(token->token_type));
 	}
     printf("\n"); 
 }
@@ -1265,7 +1236,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 int main()
 {
 	TwinBuffer twinBuffer;
-	FILE *inputFile = fopen("t1.txt", "r");
+	FILE *inputFile = fopen("test2.txt", "r");
 	if (inputFile == NULL)
 	{
 		fprintf(stderr, "Error opening input file.\n");

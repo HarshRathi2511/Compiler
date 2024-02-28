@@ -1,5 +1,4 @@
 #include "color.h"
-
 #include "lexerDef.h"
 
 // REMOVING COMMENTS 

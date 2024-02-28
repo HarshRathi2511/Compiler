@@ -6,7 +6,7 @@ char *Find_Comment_Symbol( char comment, const char *readBuffer) {
     int counter =0;
     while (*readBuffer != '\0') {
         int counter_two=1;
-        if(counter!=0){
+        if(counter==0){
             counter--;
             counter_two++;    
         }

@@ -1,5 +1,6 @@
 #include "color.h"
 #include "lexerDef.h"
+
 // REMOVING COMMENTS 
 char *Find_Comment_Symbol( char comment, const char *readBuffer) {
     int counter =0;

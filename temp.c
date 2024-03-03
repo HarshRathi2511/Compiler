@@ -66,23 +66,23 @@
 // followADT *headChain[NON_TERMINALS];
 // followADT *prevChain[NON_TERMINALS];
 
-// rule *TK_ERROR;
-// rule *TK_SYN;
-// variable *TK_ERROR_var;
-// variable *TK_SYN_var;
+// rule *ERROR;
+// rule *SYN;
+// variable *ERROR_var;
+// variable *SYN_var;
 
 // void initializeErrorTokens()
 // {
-//     TK_ERROR_var = (variable *)malloc(sizeof(variable));
-//     TK_SYN_var = (variable *)malloc(sizeof(variable));
-//     strcpy(TK_ERROR_var->name, "TK_ERROR");
-//     strcpy(TK_SYN_var->name, "TK_SYN");
-//     TK_ERROR = (rule *)malloc(sizeof(rule));
-//     TK_SYN = (rule *)malloc(sizeof(rule));
-//     TK_ERROR->headNode = (varNode *)malloc(sizeof(varNode));
-//     TK_SYN->headNode = (varNode *)malloc(sizeof(varNode));
-//     TK_ERROR->headNode->v = TK_ERROR_var;
-//     TK_SYN->headNode->v = TK_SYN_var;
+//     ERROR_var = (variable *)malloc(sizeof(variable));
+//     SYN_var = (variable *)malloc(sizeof(variable));
+//     strcpy(ERROR_var->name, "ERROR");
+//     strcpy(SYN_var->name, "SYN");
+//     ERROR = (rule *)malloc(sizeof(rule));
+//     SYN = (rule *)malloc(sizeof(rule));
+//     ERROR->headNode = (varNode *)malloc(sizeof(varNode));
+//     SYN->headNode = (varNode *)malloc(sizeof(varNode));
+//     ERROR->headNode->v = ERROR_var;
+//     SYN->headNode->v = SYN_var;
 // }
 
 // token_input *create_Token_input(int linenum, char name[30], int varNum, token_input *next_token)
@@ -107,15 +107,15 @@
 //         return output;
 //     }
 
-//     if (currRule == TK_ERROR)
+//     if (currRule == ERROR)
 //     {
-//         strcpy(output, "TK_ERROR");
+//         strcpy(output, "ERROR");
 //         return output;
 //     }
 
-//     if (currRule == TK_SYN)
+//     if (currRule == SYN)
 //     {
-//         strcpy(output, "TK_SYN");
+//         strcpy(output, "SYN");
 //         return output;
 //     }
 
@@ -156,7 +156,7 @@
 //     {
 //         for (int j = 0; j < TERMINALS; j++)
 //         {
-//             matrix[i][j] = TK_ERROR;
+//             matrix[i][j] = ERROR;
 //         }
 //     }
 
@@ -193,7 +193,7 @@
 //             updateMatrix(curr, intersection, i);
 //             curr = curr->nextRule;
 //         }
-//         updateMatrix(TK_SYN, follow[i], i);
+//         updateMatrix(SYN, follow[i], i);
 //     }
 // }
 
@@ -212,7 +212,7 @@
 //     {
 //         if (mask & ((1ULL << i)))
 //         {
-//             if (currRule == TK_SYN && matrix[ind][i] != TK_ERROR)
+//             if (currRule == SYN && matrix[ind][i] != ERROR)
 //                 continue;
 //             matrix[ind][i] = currRule;
 //         }
@@ -823,8 +823,8 @@
 //         token->varNum;
 //         variable *curr_var = st->top->data;
 //         bool curr_isTerminal = curr_var->isTerminal;
-//         bool is_TK_ERROR = (!curr_isTerminal && matrix[curr_var->varNum][token->varNum] == TK_ERROR);
-//         bool is_TK_SYN = (!curr_isTerminal && matrix[curr_var->varNum][token->varNum] == TK_SYN);
+//         bool is_ERROR = (!curr_isTerminal && matrix[curr_var->varNum][token->varNum] == ERROR);
+//         bool is_SYN = (!curr_isTerminal && matrix[curr_var->varNum][token->varNum] == SYN);
 //         if (curr_isTerminal && curr_var->varNum == token->varNum)
 //         {
 //             pop(st);
@@ -846,9 +846,9 @@
 //             }
 //             continue;
 //         }
-//         if (curr_isTerminal || matrix[curr_var->varNum][token->varNum]->headNode == (is_TK_ERROR || is_TK_SYN))
+//         if (curr_isTerminal || matrix[curr_var->varNum][token->varNum]->headNode == (is_ERROR || is_SYN))
 //         {
-//             if (is_TK_SYN)
+//             if (is_SYN)
 //             {
 //                 pop(st);
 //                 if (curr_child->nextSibling == NULL)
@@ -871,7 +871,7 @@
 //             {
 //                 printf("ERROR in Parsing for token %s at line number %d \n", token->name, token->linenum);
 //                 token = token->next_token;
-//                 TreeNode *new_child = createTreeNode(TK_ERROR_var);
+//                 TreeNode *new_child = createTreeNode(ERROR_var);
 //                 addChild(curr_child, new_child);
 //                 curr_child = curr_child->firstChild;
 //                 if (curr_child->nextSibling == NULL)

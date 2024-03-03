@@ -2,26 +2,21 @@
 #define TREE_H
 
 #include <stdbool.h>
-
-typedef struct Variable
-{
-    char name[30];
-    int varNum;
-    bool isTerminal;
-} Variable;
+#include <string.h>
+#include "stack_ADT.h"
 
 typedef struct TreeNode
 {
-    Variable *data;
+    variable *data;
     struct TreeNode *firstChild;
     struct TreeNode *nextSibling;
     struct TreeNode *parent;
 } TreeNode;
 
-TreeNode *createTreeNode(Variable *data);
+TreeNode *createTreeNode(variable *data);
 void addChild(TreeNode *parent, TreeNode *child);
 void printTree(TreeNode *root, int depth);
 void freeTreeNode(TreeNode *node);
-Variable *createVariable(const char *name, int varNum, bool isTerminal);
+variable *createvariable(const char *name, int varNum, bool isTerminal);
 
 #endif /* TREE_H */

@@ -1342,7 +1342,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 			if (strlen(token->lexeme) > 20)
 			{
 				token->token_type = TK_ERROR;
-				char *errorMessage = "Variable Identifier is longer than the prescribed length of 20 characters";
+				char *errorMessage = "variable Identifier is longer than the prescribed length of 20 characters";
 				strcpy(token->lexeme, errorMessage);
 				return token;
 			}
@@ -1591,7 +1591,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 int main()
 {
 	TwinBuffer twinBuffer;
-	FILE *inputFile = fopen("t1.txt", "r");
+	FILE *inputFile = fopen("t4.txt", "r");
 	if (inputFile == NULL)
 	{
 		fprintf(stderr, "Error opening input file.\n");
@@ -1613,7 +1613,10 @@ int main()
 	while (true)
 	{
 		TOKEN *token = getNextToken(&twinBuffer);
-
+		if (token->isEOF)
+		{
+			break;
+		}
 		if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
 		{
 			token_input *new_token = (token_input *)malloc(sizeof(token_input));
@@ -1624,10 +1627,6 @@ int main()
 			curr = new_token;
 		}
 
-		if (token->isEOF)
-		{
-			break;
-		}
 		printToken(token);
 	}
 	// curr = parser_input_head->next_token;
@@ -1639,6 +1638,51 @@ int main()
 	// 	i++;
 	// 	curr = curr->next_token;
 	// }
+
+	// invoke your lexer and parser here
+	populateTerminals("terminals.txt");
+	populateNonTerminals("non_terminals.txt");
+	// test();
+	// printTerminals();
+	// printNonTerminals();
+	fill_epsilon();
+	readGrammar("grammar.txt");
+	// printf("read_grammar successfully worked!");
+	// printGrammar();
+	// print_epsilon();
+	// Free dynamically allocated memory
+	// printf("%d \n",epsilon[0]);
+	// printf("CHECK FOR SEGFAULT before populate first\n");
+	populateFirst();
+	epsilonFirst();
+	// test_first();
+	// printf("read_grammar successfully pre\n!");
+	populateFollow();
+	// printf("read_grammar successfully pst\n");
+	// test_follow();
+	// printf("CHECK FOR SEGFAULT after TEST FOLLOW \n");
+	initializeErrorTokens();
+	// printf("CHECK FOR SEGFAULT after Initialise error tokens \n");
+	fillMatrix();
+	// printf("CHECK FOR SEGFAULT after fill matrix \n");
+	// printf("MATRIX CHECKING %d \n", matrix[1][40] == NULL);
+	// printf("reached");
+	// exportToCSV();
+	// printMatrix();
+	// printf("reached");
+	assignNumToTokens(parser_input_head);
+	
+	TreeNode *root = parser(parser_input_head->next_token);
+	// printTree(root, 0);
+
+	for (int i = 0; i < TERMINALS; i++)
+	{
+		free(terminal_array[i]);
+	}
+	for (int i = 0; i < NON_TERMINALS; i++)
+	{
+		free(non_terminal_array[i]);
+	}
 
 	fclose(inputFile);
 

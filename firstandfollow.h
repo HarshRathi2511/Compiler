@@ -50,6 +50,7 @@ typedef struct rule
     varNode *headNode;
 } rule;
 
+// Global variables
 rule *matrix[NON_TERMINALS][TERMINALS];
 variable *terminal_array[TERMINALS];
 variable *non_terminal_array[NON_TERMINALS];
@@ -59,6 +60,12 @@ bool epsilon[NON_TERMINALS];
 unsigned long long first[NON_TERMINALS];
 unsigned long long follow[NON_TERMINALS];
 token_input *parser_input_head;
+followADT *headChain[NON_TERMINALS];
+followADT *prevChain[NON_TERMINALS];
+rule *ERROR;
+rule *SYN;
+variable *ERROR_var;
+variable *SYN_var;
 
 // Function prototypes
 unsigned long long recFirst(int i);
@@ -80,7 +87,6 @@ void printRule(int i, rule *currRule);
 void fill_epsilon();
 void print_epsilon();
 bool inFollow(variable *nonTerminal, variable *terminal);
-void test_follow();
 void populateTerminals(const char *filename);
 void populateNonTerminals(const char *filename);
 void printTerminals();
@@ -88,5 +94,9 @@ void printNonTerminals();
 void readGrammar(const char *filename);
 void printGrammar();
 TreeNode *parser(token_input *token);
+followADT *createfADT(variable *v, followADT *next, bool first);
+void test_first();
+void epsilonFirst();
+void assignNumToTokens(token_input *head);
 
 #endif /* MY_HEADER_FILE_H */

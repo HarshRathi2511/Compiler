@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "tree_ADT.h"
 
-TreeNode *createTreeNode(Variable *data)
+TreeNode *createTreeNode(variable *data)
 {
     TreeNode *node = (TreeNode *)malloc(sizeof(TreeNode));
     if (node)
@@ -85,34 +85,34 @@ void freeTreeNode(TreeNode *node)
     freeTreeNode(node->nextSibling);
     free(node);
 }
-Variable *createVariable(const char *name, int varNum, bool isTerminal)
+variable *createvariable(const char *name, int varNum, bool isTerminal)
 {
-    Variable *variable = (Variable *)malloc(sizeof(Variable));
-    if (variable)
+    variable *var = (variable *)malloc(sizeof(variable));
+    if (var)
     {
-        strncpy(variable->name, name, sizeof(variable->name) - 1);
-        variable->name[sizeof(variable->name) - 1] = '\0'; // Ensure null-termination
-        variable->varNum = varNum;
-        variable->isTerminal = isTerminal;
+        strncpy(var->name, name, sizeof(var->name) - 1);
+        var->name[sizeof(var->name) - 1] = '\0'; // Ensure null-termination
+        var->varNum = varNum;
+        var->isTerminal = isTerminal;
     }
-    return variable;
+    return var;
 }
 
 // int main()
 // {
 //     // Creating some sample variables
-//     Variable *var1 = (Variable *)malloc(sizeof(Variable));
-//     strcpy(var1->name, "Variable 1");
+//     variable *var1 = (variable *)malloc(sizeof(variable));
+//     strcpy(var1->name, "variable 1");
 //     var1->varNum = 1;
 //     var1->isTerminal = true;
 
-//     Variable *var2 = (Variable *)malloc(sizeof(Variable));
-//     strcpy(var2->name, "Variable 2");
+//     variable *var2 = (variable *)malloc(sizeof(variable));
+//     strcpy(var2->name, "variable 2");
 //     var2->varNum = 2;
 //     var2->isTerminal = false;
 
-//     Variable *var3 = (Variable *)malloc(sizeof(Variable));
-//     strcpy(var3->name, "Variable 3");
+//     variable *var3 = (variable *)malloc(sizeof(variable));
+//     strcpy(var3->name, "variable 3");
 //     var3->varNum = 3;
 //     var3->isTerminal = true;
 
@@ -138,17 +138,17 @@ Variable *createVariable(const char *name, int varNum, bool isTerminal)
 // int main()
 // {
 //     // Create variable nodes
-//     Variable *rootVar = createVariable("Root", 0, false);
-//     Variable *child1Var = createVariable("Child1", 1, false);
-//     Variable *child2Var = createVariable("Child2", 2, false);
-//     Variable *child3Var = createVariable("Child3", 3, false);
-//     Variable *child4Var = createVariable("Child4", 4, false);
-//     Variable *child5Var = createVariable("Child5", 5, false);
-//     Variable *child6Var = createVariable("Child6", 6, false);
-//     Variable *child7Var = createVariable("Child7", 7, false);
-//     Variable *child8Var = createVariable("Child8", 8, false);
-//     Variable *child9Var = createVariable("Child9", 9, false);
-//     Variable *child10Var = createVariable("Child10", 10, false);
+//     variable *rootVar = createvariable("Root", 0, false);
+//     variable *child1Var = createvariable("Child1", 1, false);
+//     variable *child2Var = createvariable("Child2", 2, false);
+//     variable *child3Var = createvariable("Child3", 3, false);
+//     variable *child4Var = createvariable("Child4", 4, false);
+//     variable *child5Var = createvariable("Child5", 5, false);
+//     variable *child6Var = createvariable("Child6", 6, false);
+//     variable *child7Var = createvariable("Child7", 7, false);
+//     variable *child8Var = createvariable("Child8", 8, false);
+//     variable *child9Var = createvariable("Child9", 9, false);
+//     variable *child10Var = createvariable("Child10", 10, false);
 
 //     // Create tree nodes
 //     TreeNode *rootNode = createTreeNode(rootVar);

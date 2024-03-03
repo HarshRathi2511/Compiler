@@ -83,7 +83,7 @@ Line no. 8	 Lexeme global	 	Token TK_GLOBAL
 Line no. 8	 Lexeme _abc	 	Token TK_FUNID
 Line no. 8	 Lexeme !=	 	Token TK_NE
 Line no. 8	 Lexeme ~	 	Token TK_NOT
-Line No 8: Error :Variable Identifier is longer than the prescribed length of 20 characters.
+Line No 8: Error :variable Identifier is longer than the prescribed length of 20 characters.
 Line no. 8	 Lexeme ~	 	Token TK_NOT
 Line no. 8	 Lexeme ;	 	Token TK_SEM
 Line no: 9 : Error: Unknown pattern <5000.7>

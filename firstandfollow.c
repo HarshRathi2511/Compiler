@@ -1,88 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h> // Include the header file for bool type
-#include <sys/types.h>
-#include <stack_ADT.h>
-#include <tree_ADT.h>
-#define NON_TERMINALS 53
-#define TERMINALS 58 // 56 terminals + 1 epsilon + 1 dollar
-
-#include <time.h>
-
-// Define the Token struct
-// Define the typedef for struct variable
-typedef struct
-{
-    char name[30];
-    int varNum;
-    bool isTerminal;
-} variable;
-
-typedef struct followADT
-{
-    variable *v;
-    struct followADT *next;
-    bool first;
-} followADT;
-
-// Define the typedef for struct varNode
-typedef struct varNode
-{
-    variable *v;
-    struct varNode *next;
-} varNode;
-typedef struct token_input
-{
-    int linenum;
-    char name[30];
-    int varNum;
-    struct token_input *next_token;
-} token_input;
-
-// Define the typedef for struct rule
-typedef struct rule
-{
-    struct rule *nextRule;
-    varNode *headNode;
-} rule;
-
-unsigned long long recFirst(int i);
-bool inFirst(variable *nonTerminal, variable *terminal);
-void populateFirst();
-unsigned long long recFollow(int i);
-void removeEpsilon();
-
-rule *matrix[NON_TERMINALS][TERMINALS];
-variable *terminal_array[TERMINALS];
-variable *non_terminal_array[NON_TERMINALS];
-varNode First[NON_TERMINALS]; // Declare an array of varNode
-rule *grammar[NON_TERMINALS];
-bool epsilon[NON_TERMINALS];
-unsigned long long first[NON_TERMINALS];
-unsigned long long follow[NON_TERMINALS];
-token_input *parser_input_head;
-
-followADT *headChain[NON_TERMINALS];
-followADT *prevChain[NON_TERMINALS];
-
-rule *TK_ERROR;
-rule *TK_SYN;
-variable *TK_ERROR_var;
-variable *TK_SYN_var;
+#include "firstandfollow.h"
 
 void initializeErrorTokens()
 {
-    TK_ERROR_var = (variable *)malloc(sizeof(variable));
-    TK_SYN_var = (variable *)malloc(sizeof(variable));
-    strcpy(TK_ERROR_var->name, "TK_ERROR");
-    strcpy(TK_SYN_var->name, "TK_SYN");
-    TK_ERROR = (rule *)malloc(sizeof(rule));
-    TK_SYN = (rule *)malloc(sizeof(rule));
-    TK_ERROR->headNode = (varNode *)malloc(sizeof(varNode));
-    TK_SYN->headNode = (varNode *)malloc(sizeof(varNode));
-    TK_ERROR->headNode->v = TK_ERROR_var;
-    TK_SYN->headNode->v = TK_SYN_var;
+    ERROR_var = (variable *)malloc(sizeof(variable));
+    SYN_var = (variable *)malloc(sizeof(variable));
+    strcpy(ERROR_var->name, "ERROR");
+    strcpy(SYN_var->name, "SYN");
+    ERROR = (rule *)malloc(sizeof(rule));
+    SYN = (rule *)malloc(sizeof(rule));
+    ERROR->headNode = (varNode *)malloc(sizeof(varNode));
+    SYN->headNode = (varNode *)malloc(sizeof(varNode));
+    ERROR->headNode->v = ERROR_var;
+    SYN->headNode->v = SYN_var;
 }
 
 token_input *create_Token_input(int linenum, char name[30], int varNum, token_input *next_token)
@@ -107,15 +36,15 @@ char *ruleToString(int i, rule *currRule)
         return output;
     }
 
-    if (currRule == TK_ERROR)
+    if (currRule == ERROR)
     {
-        strcpy(output, "TK_ERROR");
+        strcpy(output, "ERROR");
         return output;
     }
 
-    if (currRule == TK_SYN)
+    if (currRule == SYN)
     {
-        strcpy(output, "TK_SYN");
+        strcpy(output, "SYN");
         return output;
     }
 
@@ -156,7 +85,7 @@ void fillMatrix()
     {
         for (int j = 0; j < TERMINALS; j++)
         {
-            matrix[i][j] = TK_ERROR;
+            matrix[i][j] = ERROR;
         }
     }
 
@@ -193,7 +122,7 @@ void fillMatrix()
             updateMatrix(curr, intersection, i);
             curr = curr->nextRule;
         }
-        updateMatrix(TK_SYN, follow[i], i);
+        updateMatrix(SYN, follow[i], i);
     }
 }
 
@@ -212,7 +141,7 @@ void updateMatrix(rule *currRule, unsigned long long mask, int ind)
     {
         if (mask & ((1ULL << i)))
         {
-            if (currRule == TK_SYN && matrix[ind][i] != TK_ERROR)
+            if (currRule == SYN && matrix[ind][i] != ERROR)
                 continue;
             matrix[ind][i] = currRule;
         }
@@ -646,10 +575,10 @@ void readGrammar(const char *filename)
         char LHS[100];
         char RHS[100];
         char RHS_array[30][30];
-        printf("**************************************************** \n");
-        printf("%d.%s\n", lineno, buffer);
+        // printf("**************************************************** \n");
+        // printf("%d.%s\n", lineno, buffer);
         sscanf(buffer, "%s ===> %[^\n\t]", LHS, RHS);
-        printf("LHS is %s size = %zu\n", LHS, strlen(LHS));
+        // printf("LHS is %s size = %zu\n", LHS, strlen(LHS));
         // printf("RHS is %s \n", RHS);
 
         int lhsIndex = -1;
@@ -658,7 +587,7 @@ void readGrammar(const char *filename)
             if (strcmp(non_terminal_array[i]->name, LHS) == 0)
             {
                 lhsIndex = i;
-                printf("LHS Index of %s is %d. \n", LHS, lhsIndex);
+                // printf("LHS Index of %s is %d. \n", LHS, lhsIndex);
                 break;
             }
         }
@@ -672,11 +601,11 @@ void readGrammar(const char *filename)
             token = strtok(NULL, " ");
             RHS_index++;
         }
-        printf("RHS INDEX IS %d\n", RHS_index);
+        // printf("RHS INDEX IS %d\n", RHS_index);
 
         for (int i = 0; i < RHS_index; i++)
         {
-            printf(".%s%zu \t", RHS_array[i], strlen(RHS_array[i]));
+            // printf(".%s%zu \t", RHS_array[i], strlen(RHS_array[i]));
             if (RHS_array[i][0] == 'e')
             {
                 epsilon[lhsIndex] = true;
@@ -689,7 +618,7 @@ void readGrammar(const char *filename)
             printf("Non-terminal %s not found.\n", LHS);
             continue;
         }
-        printf("\n**************************************************** \n");
+        // printf("\n**************************************************** \n");
         // Create a new rule node
         rule *newRule = (rule *)malloc(sizeof(rule));
         newRule->nextRule = NULL;
@@ -809,104 +738,145 @@ void printGrammar()
     printf("\n");
 }
 
+void assignNumToTokens(token_input *head)
+{
+
+    token_input *curr = head->next_token;
+
+    while (curr)
+    {
+        for (int i = 0; i < TERMINALS; i++)
+        {
+            if (!strcmp(curr->name, terminal_array[i]->name))
+            {
+                // printf("matching %s %s \n", curr->name, terminal_array[i]->name);
+                curr->varNum = i;
+            }
+        }
+        curr = curr->next_token;
+    }
+}
+
 TreeNode *parser(token_input *token)
 {
     Stack *st = initializeStack();
+    // printf("Segfault check post stack \n");
     TreeNode *root = createTreeNode(non_terminal_array[0]);
+    // printf("Segfault check post tree \n");
     push(st, terminal_array[0]);
+    // printf("Segfault check post inserting dollar \n");
     push(st, non_terminal_array[0]);
-    TreeNode *curr_parent = root;
-    TreeNode *curr_child = curr_parent->firstChild;
+    // printf("Segfault check post inserting program \n");
+    // TreeNode *curr_parent = root;
+    // TreeNode *curr_child = curr_parent->firstChild;
+    int i = 1;
     while (token != NULL)
     {
-        // token_input *curr = token;
-        token->varNum;
+        printf("%d \t", i);
+        i++;
+        token_input *curr = token;
+
         variable *curr_var = st->top->data;
         bool curr_isTerminal = curr_var->isTerminal;
-        bool is_TK_ERROR = (!curr_isTerminal && matrix[curr_var->varNum][token->varNum] == TK_ERROR);
-        bool is_TK_SYN = (!curr_isTerminal && matrix[curr_var->varNum][token->varNum] == TK_SYN);
+        printf("%d %d\n", curr_var->varNum, token->varNum);
+        bool is_ERROR = (!curr_isTerminal && strcmp(matrix[curr_var->varNum][token->varNum]->headNode->v->name, ERROR->headNode->v->name));
+        bool is_SYN = (!curr_isTerminal && strcmp(matrix[curr_var->varNum][token->varNum]->headNode->v->name, SYN->headNode->v->name));
+        // printf("xyz\n");
+
         if (curr_isTerminal && curr_var->varNum == token->varNum)
         {
-            pop(st);
+            printf("MATCHED - %s %s \n", curr_var->name, token->name);
+            if (!isEmpty(st))
+                pop(st);
             token = token->next_token;
-            if (curr_child->nextSibling == NULL)
-            {
-                while (curr_parent->nextSibling == NULL)
-                {
-                    curr_child = curr_child->parent;
-                    curr_parent = curr_child->parent;
-                }
-                curr_child = curr_child->nextSibling;
-                curr_parent = curr_child->parent;
-            }
-            else
-            {
-                curr_child = curr_child->nextSibling;
-                curr_parent = curr_child->parent;
-            }
+            // if (curr_child->nextSibling == NULL)
+            // {
+            //     while (curr_parent->nextSibling == NULL)
+            //     {
+            //         curr_child = curr_child->parent;
+            //         curr_parent = curr_child->parent;
+            //     }
+            //     curr_child = curr_child->nextSibling;
+            //     curr_parent = curr_child->parent;
+            // }
+            // else
+            // {
+            //     curr_child = curr_child->nextSibling;
+            //     curr_parent = curr_child->parent;
+            // }
             continue;
         }
-        if (curr_isTerminal || matrix[curr_var->varNum][token->varNum]->headNode == (is_TK_ERROR || is_TK_SYN))
+        if (curr_isTerminal || is_ERROR || is_SYN)
         {
-            if (is_TK_SYN)
+            if (is_SYN)
             {
                 pop(st);
-                if (curr_child->nextSibling == NULL)
-                {
-                    while (curr_parent->nextSibling == NULL)
-                    {
-                        curr_child = curr_child->parent;
-                        curr_parent = curr_child->parent;
-                    }
-                    curr_child = curr_child->nextSibling;
-                    curr_parent = curr_child->parent;
-                }
-                else
-                {
-                    curr_child = curr_child->nextSibling;
-                    curr_parent = curr_child->parent;
-                }
+                printf("IN SYN\n");
+                // if (curr_child->nextSibling == NULL)
+                // {
+                //     while (curr_parent->nextSibling == NULL)
+                //     {
+                //         curr_child = curr_child->parent;
+                //         curr_parent = curr_child->parent;
+                //     }
+                //     curr_child = curr_child->nextSibling;
+                //     curr_parent = curr_child->parent;
+                // }
+                // else
+                // {
+                //     curr_child = curr_child->nextSibling;
+                //     curr_parent = curr_child->parent;
+                // }
             }
             else
             {
                 printf("ERROR in Parsing for token %s at line number %d \n", token->name, token->linenum);
                 token = token->next_token;
-                TreeNode *new_child = createTreeNode(TK_ERROR_var);
-                addChild(curr_child, new_child);
-                curr_child = curr_child->firstChild;
-                if (curr_child->nextSibling == NULL)
-                {
-                    while (curr_parent->nextSibling == NULL)
-                    {
-                        curr_child = curr_child->parent;
-                        curr_parent = curr_child->parent;
-                    }
-                    curr_child = curr_child->nextSibling;
-                    curr_parent = curr_child->parent;
-                }
-                else
-                {
-                    curr_child = curr_child->nextSibling;
-                    curr_parent = curr_child->parent;
-                }
+                // TreeNode *new_child = createTreeNode(ERROR_var);
+                // addChild(curr_child, new_child);
+                // curr_child = curr_child->firstChild;
+                // if (curr_child->nextSibling == NULL)
+                // {
+                //     while (curr_parent->nextSibling == NULL)
+                //     {
+                //         curr_child = curr_child->parent;
+                //         curr_parent = curr_child->parent;
+                //     }
+                //     curr_child = curr_child->nextSibling;
+                //     curr_parent = curr_child->parent;
+                // }
+                // else
+                // {
+                //     curr_child = curr_child->nextSibling;
+                //     curr_parent = curr_child->parent;
+                // }
             }
 
             continue;
         }
+        printf("Check for segfault pre temp declaration \n");
+
         varNode *rule_to_push = matrix[curr_var->varNum][token->varNum]->headNode;
         Stack *temp = initializeStack();
+        printf("Check for segfault post temp declaration \n");
+        int j = 0;
         while (rule_to_push != NULL)
         {
             push(temp, rule_to_push->v);
             rule_to_push = rule_to_push->next;
-            TreeNode *new_child = createTreeNode(rule_to_push->v);
-            addChild(curr_child, new_child);
+            printf("%d\n", j);
+            j++;
+            // TreeNode *new_child = createTreeNode(rule_to_push->v);
+            // addChild(curr_child, new_child);
         }
-        curr_child = curr_child->firstChild;
-        curr_parent = curr_child->parent;
-        while (isEmpty(temp))
+        // curr_child = curr_child->firstChild;
+        // curr_parent = curr_child->parent;
+        printf("Check for segfault post pushing in temp \n");
+
+        while (!isEmpty(temp))
         {
-            variable *v = temp->top;
+            variable *v;
+            v = temp->top->data;
             push(st, v);
             pop(temp);
         }
@@ -914,64 +884,64 @@ TreeNode *parser(token_input *token)
     return root;
 }
 
-int main()
-{
-    clock_t start_time, end_time;
+// int main()
+// {
+//     clock_t start_time, end_time;
 
-    double total_CPU_time, total_CPU_time_in_seconds;
+//     double total_CPU_time, total_CPU_time_in_seconds;
 
-    start_time = clock();
+//     start_time = clock();
 
-    // invoke your lexer and parser here
-    populateTerminals("terminals.txt");
-    populateNonTerminals("non_terminals.txt");
-    // test();
-    // printTerminals();
-    // printNonTerminals();
-    fill_epsilon();
-    readGrammar("grammar.txt");
-    end_time = clock();
-    // printf("read_grammar successfully worked!");
-    printGrammar();
-    // print_epsilon();
-    // Free dynamically allocated memory
-    // printf("%d \n",epsilon[0]);
-    printf("CHECK FOR SEGFAULT before populate first\n");
-    populateFirst();
+//     // invoke your lexer and parser here
+//     populateTerminals("terminals.txt");
+//     populateNonTerminals("non_terminals.txt");
+//     // test();
+//     // printTerminals();
+//     // printNonTerminals();
+//     fill_epsilon();
+//     readGrammar("grammar.txt");
+//     end_time = clock();
+//     // printf("read_grammar successfully worked!");
+//     printGrammar();
+//     // print_epsilon();
+//     // Free dynamically allocated memory
+//     // printf("%d \n",epsilon[0]);
+//     printf("CHECK FOR SEGFAULT before populate first\n");
+//     populateFirst();
 
-    epsilonFirst();
-    test_first();
-    // printf("read_grammar successfully pre\n!");
-    populateFollow();
-    // printf("read_grammar successfully pst\n");
-    test_follow();
-    printf("CHECK FOR SEGFAULT after TEST FOLLOW \n");
-    initializeErrorTokens();
-    printf("CHECK FOR SEGFAULT after Initialise error tokens \n");
-    fillMatrix();
-    printf("CHECK FOR SEGFAULT after fill matrix \n");
-    printf("MATRIX CHECKING %d \n", matrix[1][40] == NULL);
-    printf("reached");
-    exportToCSV();
-    // printMatrix();
-    printf("reached");
+//     epsilonFirst();
+//     test_first();
+//     // printf("read_grammar successfully pre\n!");
+//     populateFollow();
+//     // printf("read_grammar successfully pst\n");
+//     test_follow();
+//     printf("CHECK FOR SEGFAULT after TEST FOLLOW \n");
+//     initializeErrorTokens();
+//     printf("CHECK FOR SEGFAULT after Initialise error tokens \n");
+//     fillMatrix();
+//     printf("CHECK FOR SEGFAULT after fill matrix \n");
+//     printf("MATRIX CHECKING %d \n", matrix[1][40] == NULL);
+//     printf("reached");
+//     exportToCSV();
+//     // printMatrix();
+//     printf("reached");
 
-    for (int i = 0; i < TERMINALS; i++)
-    {
-        free(terminal_array[i]);
-    }
-    for (int i = 0; i < NON_TERMINALS; i++)
-    {
-        free(non_terminal_array[i]);
-    }
+//     for (int i = 0; i < TERMINALS; i++)
+//     {
+//         free(terminal_array[i]);
+//     }
+//     for (int i = 0; i < NON_TERMINALS; i++)
+//     {
+//         free(non_terminal_array[i]);
+//     }
 
-    // end_time = clock();
+//     // end_time = clock();
 
-    total_CPU_time = (double)(end_time - start_time);
+//     total_CPU_time = (double)(end_time - start_time);
 
-    total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
+//     total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
 
-    printf("Total CPU time: %.6f seconds\n", total_CPU_time_in_seconds);
+//     printf("Total CPU time: %.6f seconds\n", total_CPU_time_in_seconds);
 
-    return 0;
-}
+//     return 0;
+// }

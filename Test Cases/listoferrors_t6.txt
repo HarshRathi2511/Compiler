@@ -1,5 +1,5 @@
 Line 7  Error: The token TK_SQL for lexeme [  does not match with the expected token TK_LIST
-Line 8 	Error: Variable Identifier is longer than the prescribed length of 20 characters.
+Line 8 	Error: variable Identifier is longer than the prescribed length of 20 characters.
 Line 8 	Error: The token TK_SEM for lexeme ;  does not match with the expected token TK_ID
 Line 10 Error: Unknown pattern <5000.7>
 Line 10 Error: Invalid token TK_SEM encountered with value ; stack top arithmeticExpression

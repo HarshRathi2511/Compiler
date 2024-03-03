@@ -65,11 +65,11 @@ variable *pop(Stack *stack)
 
 //     // Creating some variable objects
 //     variable var1 = {.varNum = 1, .isTerminal = false};
-//     strcpy(var1.name, "Variable 1");
+//     strcpy(var1.name, "variable 1");
 //     variable var2 = {.varNum = 2, .isTerminal = true};
-//     strcpy(var2.name, "Variable 2");
+//     strcpy(var2.name, "variable 2");
 //     variable var3 = {.varNum = 3, .isTerminal = false};
-//     strcpy(var3.name, "Variable 3");
+//     strcpy(var3.name, "variable 3");
 
 //     // Pushing variables onto the stack
 //     push(stack, &var1);
@@ -92,4 +92,3 @@ variable *pop(Stack *stack)
 
 //     return 0;
 // }
-

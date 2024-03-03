@@ -1,0 +1,53 @@
+<program> -> $
+<otherFunctions> -> TK_MAIN
+<mainFunction> -> $
+<stmts> -> TK_END
+<function> -> TK_MAIN   TK_FUNID
+<input_par> -> TK_SEM   TK_SQR
+<output_par> -> TK_SEM
+<parameter_list> -> TK_SQR
+<dataType> -> TK_ID     TK_COLON
+<remaining_list> -> TK_SQR
+<primitiveDatatype> -> TK_ID    TK_COLON
+<constructedDatatype> -> TK_ID  TK_COLON
+<typeDefinitions> -> TK_SQL     TK_ID   TK_TYPE         TK_CALL         TK_WHILE        TK_IF   TK_READ         TK_WRITE        TK_RETURN
+<declarations> -> TK_SQL        TK_ID   TK_CALL         TK_WHILE        TK_IF   TK_READ         TK_WRITE        TK_RETURN
+<otherStmts> -> TK_ENDWHILE     TK_ELSE         TK_ENDIF        TK_RETURN
+<returnStmt> -> TK_END
+<actualOrRedefined> -> TK_SQL   TK_ID   TK_RECORD       TK_UNION        TK_TYPE         TK_CALL         TK_WHILE        TK_IF   TK_READ         TK_WRITE        TK_RETURN       TK_DEFINETYPE
+<typeDefinition> -> TK_SQL      TK_ID   TK_RECORD       TK_UNION        TK_TYPE         TK_CALL         TK_WHILE        TK_IF   TK_READ         TK_WRITE        TK_RETURN       TK_DEFINETYPE
+<definetypestmt> -> TK_SQL      TK_ID   TK_RECORD       TK_UNION        TK_TYPE         TK_CALL         TK_WHILE        TK_IF   TK_READ         TK_WRITE        TK_RETURN       TK_DEFINETYPE
+<fieldDefinitions> -> TK_ENDRECORD      TK_ENDUNION
+<fieldDefinition> -> TK_ENDRECORD       TK_ENDUNION     TK_TYPE
+<moreFields> -> TK_ENDRECORD    TK_ENDUNION
+<fieldType> -> TK_COLON
+<declaration> -> TK_SQL         TK_ID   TK_TYPE         TK_CALL         TK_WHILE        TK_IF   TK_READ         TK_WRITE        TK_RETURN
+<global_or_not> -> TK_SEM
+<stmt> -> TK_SQL        TK_ID   TK_CALL         TK_WHILE        TK_ENDWHILE     TK_IF   TK_ELSE         TK_ENDIF        TK_READ         TK_WRITE        TK_RETURN
+<assignmentStmt> -> TK_SQL      TK_ID   TK_CALL         TK_WHILE        TK_ENDWHILE     TK_IF   TK_ELSE         TK_ENDIF        TK_READ         TK_WRITE        TK_RETURN
+<iterativeStmt> -> TK_SQL       TK_ID   TK_CALL         TK_WHILE        TK_ENDWHILE     TK_IF   TK_ELSE         TK_ENDIF        TK_READ         TK_WRITE        TK_RETURN
+<conditionalStmt> -> TK_SQL     TK_ID   TK_CALL         TK_WHILE        TK_ENDWHILE     TK_IF   TK_ELSE         TK_ENDIF        TK_READ         TK_WRITE        TK_RETURN 
+<ioStmt> -> TK_SQL      TK_ID   TK_CALL         TK_WHILE        TK_ENDWHILE     TK_IF   TK_ELSE         TK_ENDIF        TK_READ         TK_WRITE        TK_RETURN
+<funCallStmt> -> TK_SQL         TK_ID   TK_CALL         TK_WHILE        TK_ENDWHILE     TK_IF   TK_ELSE         TK_ENDIF        TK_READ         TK_WRITE        TK_RETURN
+<singleOrRecId> -> TK_SEM       TK_ASSIGNOP     TK_CL   TK_MUL  TK_DIV  TK_PLUS         TK_MINUS        TK_LT   TK_LE   TK_EQ   TK_GT   TK_GE   TK_NE
+<arithmeticExpression> -> TK_SEM        TK_CL
+<option_single_constructed> -> TK_SEM   TK_ASSIGNOP     TK_CL   TK_MUL  TK_DIV  TK_PLUS         TK_MINUS        TK_LT   TK_LE   TK_EQ   TK_GT   TK_GE   TK_NE
+<oneExpansion> -> TK_SEM        TK_ASSIGNOP     TK_DOT  TK_CL   TK_MUL  TK_DIV  TK_PLUS         TK_MINUS        TK_LT   TK_LE   TK_EQ   TK_GT   TK_GE   TK_NE
+<moreExpansions> -> TK_SEM      TK_ASSIGNOP     TK_CL   TK_MUL  TK_DIV  TK_PLUS         TK_MINUS        TK_LT   TK_LE   TK_EQ   TK_GT   TK_GE   TK_NE
+<outputParameters> -> TK_CALL
+<inputParameters> -> TK_SEM
+<idList> -> TK_SQR
+<booleanExpression> -> TK_CL
+<elsePart> -> TK_SQL    TK_ID   TK_CALL         TK_WHILE        TK_ENDWHILE     TK_IF   TK_ELSE         TK_ENDIF        TK_READ         TK_WRITE        TK_RETURN
+<var> -> TK_SEM         TK_CL   TK_MUL  TK_DIV  TK_PLUS         TK_MINUS        TK_LT   TK_LE   TK_EQ   TK_GT   TK_GE   TK_NE
+<term> -> TK_SEM        TK_CL   TK_PLUS         TK_MINUS
+<expPrime> -> TK_SEM    TK_CL
+<lowPrecedenceOperators> -> TK_ID       TK_OP   TK_NUM  TK_RNUM
+<factor> -> TK_SEM      TK_CL   TK_MUL  TK_DIV  TK_PLUS         TK_MINUS
+<termPrime> -> TK_SEM   TK_CL   TK_PLUS         TK_MINUS
+<highPrecedenceOperators> -> TK_ID      TK_OP   TK_NUM  TK_RNUM
+<logicalOp> -> TK_OP
+<relationalOp> -> TK_ID         TK_NUM  TK_RNUM
+<optionalReturn> -> TK_SEM
+<more_ids> -> TK_SQR
+<A> -> TK_RUID 

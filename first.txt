@@ -1,0 +1,53 @@
+<program> -> TK_MAIN    TK_FUNID
+<otherFunctions> -> TK_FUNID    epsilon
+<mainFunction> -> TK_MAIN
+<stmts> -> TK_SQL       TK_ID   TK_RECORD       TK_UNION        TK_TYPE         TK_CALL         TK_WHILE        TK_IF   TK_READ         TK_WRITE        TK_RETURN       TK_DEFINETYPE
+<function> -> TK_FUNID
+<input_par> -> TK_INPUT
+<output_par> -> TK_SQR  epsilon 
+<parameter_list> -> TK_INT      TK_REAL         TK_RECORD       TK_RUID         TK_UNION
+<dataType> -> TK_INT    TK_REAL         TK_RECORD       TK_RUID         TK_UNION
+<remaining_list> -> TK_COMMA    epsilon
+<primitiveDatatype> -> TK_INT   TK_REAL
+<constructedDatatype> -> TK_RECORD      TK_RUID         TK_UNION
+<typeDefinitions> -> TK_RECORD  TK_UNION        TK_DEFINETYPE   epsilon
+<declarations> -> TK_TYPE       epsilon
+<otherStmts> -> TK_SQL  TK_ID   TK_CALL         TK_WHILE        TK_IF   TK_READ         TK_WRITE        epsilon
+<returnStmt> -> TK_RETURN
+<actualOrRedefined> -> TK_RECORD        TK_UNION        TK_DEFINETYPE
+<typeDefinition> -> TK_RECORD   TK_UNION
+<definetypestmt> -> TK_DEFINETYPE
+<fieldDefinitions> -> TK_TYPE
+<fieldDefinition> -> TK_TYPE
+<moreFields> -> TK_TYPE         epsilon
+<fieldType> -> TK_INT   TK_REAL         TK_RUID
+<declaration> -> TK_TYPE
+<global_or_not> -> TK_COLON     epsilon
+<stmt> -> TK_SQL        TK_ID   TK_CALL         TK_WHILE        TK_IF   TK_READ         TK_WRITE
+<assignmentStmt> -> TK_ID
+<iterativeStmt> -> TK_WHILE
+<conditionalStmt> -> TK_IF
+<ioStmt> -> TK_READ     TK_WRITE
+<funCallStmt> -> TK_SQL         TK_CALL
+<singleOrRecId> -> TK_ID
+<arithmeticExpression> -> TK_ID         TK_OP   TK_NUM  TK_RNUM
+<option_single_constructed> -> TK_DOT   epsilon
+<oneExpansion> -> TK_DOT
+<moreExpansions> -> TK_DOT      epsilon
+<outputParameters> -> TK_SQL    epsilon
+<inputParameters> -> TK_SQL
+<idList> -> TK_ID       TK_NUM  TK_RNUM
+<booleanExpression> -> TK_ID    TK_OP   TK_NOT  TK_NUM  TK_RNUM
+<elsePart> -> TK_ELSE   TK_ENDIF
+<var> -> TK_ID  TK_NUM  TK_RNUM
+<term> -> TK_ID         TK_OP   TK_NUM  TK_RNUM 
+<expPrime> -> TK_PLUS   TK_MINUS        epsilon
+<lowPrecedenceOperators> -> TK_PLUS     TK_MINUS
+<factor> -> TK_ID       TK_OP   TK_NUM  TK_RNUM
+<termPrime> -> TK_MUL   TK_DIV  epsilon
+<highPrecedenceOperators> -> TK_MUL     TK_DIV
+<logicalOp> -> TK_AND   TK_OR
+<relationalOp> -> TK_LT         TK_LE   TK_EQ   TK_GT   TK_GE   TK_NE
+<optionalReturn> -> TK_SQL      epsilon
+<more_ids> -> TK_COMMA  epsilon
+<A> -> TK_RECORD        TK_UNION

@@ -67,9 +67,13 @@ rule *ERROR;
 rule *SYN;
 variable *ERROR_var;
 variable *SYN_var;
+TreeNode *root;
+TreeNode *curr_child;
+Stack *st;
 
 // Function prototypes
-unsigned long long recFirst(int i);
+unsigned long long
+recFirst(int i);
 bool inFirst(variable *nonTerminal, variable *terminal);
 void populateFirst();
 unsigned long long recFollow(int i);
@@ -94,10 +98,10 @@ void printTerminals();
 void printNonTerminals();
 void readGrammar(const char *filename);
 void printGrammar();
-TreeNode *parser(token_input *token);
+void parser(token_input *token);
 followADT *createfADT(variable *v, followADT *next, bool first);
 void test_first();
 void epsilonFirst();
-void assignNumToTokens(token_input *head);
+int assignNumToTokens(token_input *head);
 
 #endif /* MY_HEADER_FILE_H */

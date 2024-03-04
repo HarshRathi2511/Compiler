@@ -738,35 +738,35 @@ void printGrammar()
     printf("\n");
 }
 
-void assignNumToTokens(token_input *head)
+int assignNumToTokens(token_input *head)
 {
-
-    token_input *curr = head->next_token;
-
-    while (curr)
+    int num = -1;
+    if (head != NULL)
     {
         for (int i = 0; i < TERMINALS; i++)
         {
-            if (!strcmp(curr->name, terminal_array[i]->name))
+            if (!strcmp(head->name, terminal_array[i]->name))
             {
                 // printf("matching %s %s \n", curr->name, terminal_array[i]->name);
-                curr->varNum = i;
+                num = i;
             }
         }
-        curr = curr->next_token;
     }
+    return num;
 }
 TreeNode *returnNextNode(TreeNode *curr_child)
 {
+    if (curr_child->parent == NULL)
+        return curr_child;
     TreeNode *curr_parent = curr_child->parent;
     if (curr_child->nextSibling == NULL)
     {
-        while (curr_parent->nextSibling == NULL)
+        while (curr_child && curr_parent->nextSibling == NULL)
         {
             curr_child = curr_child->parent;
             curr_parent = curr_child->parent;
         }
-        printf("%s %s curr child in return next node \n", curr_child->data->name, curr_parent->data->name);
+        // printf("%s %s curr child in return next node \n", curr_child->data->name, curr_parent->data->name);
         curr_child = curr_parent->nextSibling;
         curr_parent = curr_child->parent;
     }
@@ -778,31 +778,22 @@ TreeNode *returnNextNode(TreeNode *curr_child)
     return curr_child;
 }
 
-TreeNode *parser(token_input *token)
+void parser(token_input *token)
 {
-    Stack *st = initializeStack();
-    // printf("Segfault check post stack \n");
-    TreeNode *root = createTreeNode(non_terminal_array[0]);
-    // printf("Segfault check post tree \n");
-    push(st, terminal_array[0]);
-    // printf("Segfault check post inserting dollar \n");
-    push(st, non_terminal_array[0]);
-    // printf("Segfault check post inserting program \n");
-    TreeNode *curr_child = root;
-
     int i = 1;
-    while (token != NULL)
+    if (token != NULL)
     {
         // If the stack's top has epsilon
+        // printf("%d \t", i);
         if (st->top->data->isTerminal && st->top->data->varNum == 57)
         {
             pop(st);
             curr_child = returnNextNode(curr_child);
         }
 
-        printf("%d \t", i);
+        // printf("%d \t", i);
         i++;
-        token_input *curr = token;
+        // token_input *curr = token;
 
         // If stacks top has dollar
         if (st->top->data->isTerminal && st->top->data->varNum == 0)
@@ -811,51 +802,57 @@ TreeNode *parser(token_input *token)
         }
         variable *curr_var = st->top->data;
         bool curr_isTerminal = curr_var->isTerminal;
-        printf("%s %s\n", curr_var->name, token->name);
+        // printf("%s %s\n", curr_var->name, token->name);
+        // printf("%d\n", token->varNum);
+        // printf("%s \n", matrix[curr_var->varNum][token->varNum]->headNode->v->name);
+        // printf("%s \n", ERROR->headNode->v->name);
         bool is_ERROR = (!curr_isTerminal && !strcmp(matrix[curr_var->varNum][token->varNum]->headNode->v->name, ERROR->headNode->v->name));
         bool is_SYN = (!curr_isTerminal && !strcmp(matrix[curr_var->varNum][token->varNum]->headNode->v->name, SYN->headNode->v->name));
         // printf("xyz\n");
 
         if (curr_isTerminal && curr_var->varNum == token->varNum)
         {
-            printf("MATCHED - %s %s \n", curr_var->name, token->name);
+            // printf("MATCHED - %s %s \n", curr_var->name, token->name);
             if (!isEmpty(st))
                 pop(st);
 
-            printf("check segfault for tree line 824 %s %s\n", curr_child->data->name, curr_child->parent->data->name);
-            if (token->next_token != NULL)
-            {
-                curr_child = returnNextNode(curr_child);
-            }
-            token = token->next_token;
-            continue;
+            // printf("check segfault for tree line 824 %s %s\n", curr_child->data->name, curr_child->parent->data->name);
+            // if (strcmp(token->name, "TK_END"))
+            // {
+            curr_child = returnNextNode(curr_child);
+            // }
+            // token = token->next_token;
+            return;
         }
         if (curr_isTerminal || is_ERROR || is_SYN)
         {
             if (is_SYN)
             {
                 pop(st);
-                printf("SYN Line %d Error: Invalid token %s encountered with value %s stack top %s", token->linenum, token->name, token->value, curr_var->name);
+                printf("Line %d Error: Invalid token %s encountered with value %s stack top %s SYN\n", token->linenum, token->name, token->value, curr_var->name);
                 curr_child = returnNextNode(curr_child);
+                parser(token);
             }
-            else if (is_ERROR)
+            if (is_ERROR)
             {
-                printf("ERROR Line %d Error: Invalid token %s encountered with value %s stack top %s", token->linenum, token->name, token->value, curr_var->name);
-                token = token->next_token;
+                printf("Line %d Error: Invalid token %s encountered with value %s stack top %s ERROR\n", token->linenum, token->name, token->value, curr_var->name);
+                // token = token->next_token;
                 TreeNode *new_child = createTreeNode(ERROR_var);
                 addChild(curr_child, new_child);
             }
-            else if (curr_isTerminal)
+            if (curr_isTerminal)
             {
                 printf("Line %d Error: The token %s for lexeme %s  does not match with the expected token %s\n", token->linenum, token->name, token->value, curr_var->name);
                 pop(st);
-                token = token->next_token;
+                curr_child = returnNextNode(curr_child);
+                parser(token);
+                // token = token->next_token;
             }
             /*
             Line 10 Error: Invalid token TK_SEM encountered with value ; stack top arithmeticExpression
             Line 11 Error: The token TK_SEM for lexeme ;  does not match with the expected token TK_CL
             */
-            continue;
+            return;
         }
         // printf("Check for segfault pre temp declaration \n");
 
@@ -863,23 +860,23 @@ TreeNode *parser(token_input *token)
         Stack *temp = initializeStack();
         // printf("Check for segfault post temp declaration \n");
         int j = 0;
-        printf("check segfault for tree 852\n");
+        // printf("check segfault for tree 852\n");
         while (rule_to_push != NULL)
         {
             push(temp, rule_to_push->v);
-            printf("%d\n", j);
+            // printf("%d\n", j);
             j++;
-            printf("check segfault for tree 859\n");
+            // printf("check segfault for tree 859\n");
             TreeNode *new_child = createTreeNode(rule_to_push->v);
-            printf("check segfault for tree 861 %s\n", new_child->data->name);
+            // printf("check segfault for tree 861 %s\n", new_child->data->name);
             addChild(curr_child, new_child);
-            printf("check segfault for tree 863\n");
+            // printf("check segfault for tree 863\n");
             rule_to_push = rule_to_push->next;
         }
         curr_child = curr_child->firstChild;
 
         // printf("Check for segfault post pushing in temp \n");
-        printf("popping out: %s\n", st->top->data->name);
+        // printf("popping out: %s\n", st->top->data->name);
         pop(st);
         while (!isEmpty(temp))
         {
@@ -888,8 +885,9 @@ TreeNode *parser(token_input *token)
             push(st, v);
             pop(temp);
         }
+        parser(token);
     }
-    return root;
+    return;
 }
 
 // int main()

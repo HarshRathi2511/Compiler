@@ -1578,7 +1578,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 int main()
 {
 	TwinBuffer twinBuffer;
-	FILE *inputFile = fopen("t4.txt", "r");
+	FILE *inputFile = fopen("Test Cases/t6.txt", "r");
 	if (inputFile == NULL)
 	{
 		fprintf(stderr, "Error opening input file.\n");
@@ -1595,8 +1595,24 @@ int main()
 	AddtoHashTable();
 	parser_input_head = (token_input *)malloc(sizeof(token_input));
 
-	token_input *curr = parser_input_head;
+	populateTerminals("terminals.txt");
+	populateNonTerminals("non_terminals.txt");
+	fill_epsilon();
+	readGrammar("grammar.txt");
+	populateFirst();
+	epsilonFirst();
+	populateFollow();
+	initializeErrorTokens();
+	fillMatrix();
 
+	token_input *curr = parser_input_head;
+	st = initializeStack();
+	root = createTreeNode(non_terminal_array[0]);
+	TreeNode *dollarnode = createTreeNode(terminal_array[0]);
+	root->nextSibling = dollarnode;
+	push(st, terminal_array[0]);
+	push(st, non_terminal_array[0]);
+	curr_child = root;
 	while (true)
 	{
 		TOKEN *token = getNextToken(&twinBuffer);
@@ -1604,64 +1620,30 @@ int main()
 		{
 			break;
 		}
+		// printToken(token);
 		if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
 		{
 			token_input *new_token = (token_input *)malloc(sizeof(token_input));
-
 			new_token->linenum = token->line_number;
 			strcpy(new_token->name, token_type_to_string(token->token_type));
 			strcpy(new_token->value, token->lexeme);
-			curr->next_token = new_token;
-			curr = new_token;
+			new_token->varNum = assignNumToTokens(new_token);
+			// curr = new_token;
+			parser(new_token);
 		}
-
-		printToken(token);
 	}
-	curr = parser_input_head->next_token;
-	int i = 1;
+	// int i = 1;
 
-	while (curr != NULL)
-	{
-		printf("%d. %s\n", i, curr->name);
-		i++;
-		curr = curr->next_token;
-	}
+	// while (curr != NULL)
+	// {
+	// 	printf("%d. %s\n", i, curr->name);
+	// 	i++;
+	// 	curr = curr->next_token;
+	// }
 
 	// invoke your lexer and parser here
-	populateTerminals("terminals.txt");
-	populateNonTerminals("non_terminals.txt");
-	// test();
-	// printTerminals();
-	// printNonTerminals();
-	fill_epsilon();
-	readGrammar("grammar.txt");
-	// printf("read_grammar successfully worked!");
-	// printGrammar();
-	// print_epsilon();
-	// Free dynamically allocated memory
-	// printf("%d \n",epsilon[0]);
-	// printf("CHECK FOR SEGFAULT before populate first\n");
-	populateFirst();
-	epsilonFirst();
-	// test_first();
-	// printf("read_grammar successfully pre\n!");
-	populateFollow();
-	// printf("read_grammar successfully pst\n");
-	// test_follow();
-	// printf("CHECK FOR SEGFAULT after TEST FOLLOW \n");
-	initializeErrorTokens();
-	// printf("CHECK FOR SEGFAULT after Initialise error tokens \n");
-	fillMatrix();
-	// printf("CHECK FOR SEGFAULT after fill matrix \n");
-	// printf("MATRIX CHECKING %d \n", matrix[1][40] == NULL);
-	// printf("reached");
-	// exportToCSV();
-	// printMatrix();
-	// printf("reached");
-	assignNumToTokens(parser_input_head);
 
-	TreeNode *root = parser(parser_input_head->next_token);
-	printTree(root, 0);
+	// printTree(root, 0);
 
 	for (int i = 0; i < TERMINALS; i++)
 	{

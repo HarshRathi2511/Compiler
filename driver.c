@@ -4,9 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lexer.c"
+// #include "lexer.c"
 #include "lexerDef.h"
-// #include "lexer.h"
+#include "colorCodes.h"
+#include "firstandfollow.h"
+#include "stack_ADT.h"
+#include "tree_ADT.h"
+#include "lexer.h"
 #include <time.h>
 int main()
 {
@@ -64,7 +68,6 @@ int main()
 
 		case 2:
 		{
-
 			while (true)
 			{
 				TOKEN *token = getNextToken(&twinBuffer);
@@ -76,11 +79,50 @@ int main()
 			}
 			break;
 		}
-		case 3: {
-
+		case 3:
+		{
+			populateTerminals("terminals.txt");
+			populateNonTerminals("non_terminals.txt");
+			fill_epsilon();
+			readGrammar("grammar.txt");
+			populateFirst();
+			epsilonFirst();
+			populateFollow();
+			initializeErrorTokens();
+			fillMatrix();
+			parser_input_head = (token_input *)malloc(sizeof(token_input));
+			token_input *curr = parser_input_head;
+			st = initializeStack();
+			root = createTreeNode(non_terminal_array[0]);
+			TreeNode *dollarnode = createTreeNode(terminal_array[0]);
+			root->nextSibling = dollarnode;
+			push(st, terminal_array[0]);
+			push(st, non_terminal_array[0]);
+			curr_child = root;
+			while (true)
+			{
+				TOKEN *token = getNextToken(&twinBuffer);
+				if (token->isEOF)
+				{
+					break;
+				}
+				// printToken(token);
+				if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
+				{
+					token_input *new_token = (token_input *)malloc(sizeof(token_input));
+					new_token->linenum = token->line_number;
+					strcpy(new_token->name, token_type_to_string(token->token_type));
+					strcpy(new_token->value, token->lexeme);
+					new_token->varNum = assignNumToTokens(new_token);
+					// curr = new_token;
+					parser(new_token);
+				}
+			}
+			printTree(root, 0);
 		}
-		
-		case 4:{
+
+		case 4:
+		{
 			clock_t start, end;
 			double cpu_time_used;
 			start = clock();

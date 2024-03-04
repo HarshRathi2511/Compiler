@@ -756,6 +756,27 @@ void assignNumToTokens(token_input *head)
         curr = curr->next_token;
     }
 }
+TreeNode *returnNextNode(TreeNode *curr_child)
+{
+    TreeNode *curr_parent = curr_child->parent;
+    if (curr_child->nextSibling == NULL)
+    {
+        while (curr_parent->nextSibling == NULL)
+        {
+            curr_child = curr_child->parent;
+            curr_parent = curr_child->parent;
+        }
+        printf("%s %s curr child in return next node \n", curr_child->data->name, curr_parent->data->name);
+        curr_child = curr_parent->nextSibling;
+        curr_parent = curr_child->parent;
+    }
+    else
+    {
+        curr_child = curr_child->nextSibling;
+        curr_parent = curr_child->parent;
+    }
+    return curr_child;
+}
 
 TreeNode *parser(token_input *token)
 {
@@ -767,20 +788,32 @@ TreeNode *parser(token_input *token)
     // printf("Segfault check post inserting dollar \n");
     push(st, non_terminal_array[0]);
     // printf("Segfault check post inserting program \n");
-    // TreeNode *curr_parent = root;
-    // TreeNode *curr_child = curr_parent->firstChild;
+    TreeNode *curr_child = root;
+
     int i = 1;
     while (token != NULL)
     {
+        // If the stack's top has epsilon
+        if (st->top->data->isTerminal && st->top->data->varNum == 57)
+        {
+            pop(st);
+            curr_child = returnNextNode(curr_child);
+        }
+
         printf("%d \t", i);
         i++;
         token_input *curr = token;
 
+        // If stacks top has dollar
+        if (st->top->data->isTerminal && st->top->data->varNum == 1)
+        {
+            printf("Error in parsing, no more non-terminals\n");
+        }
         variable *curr_var = st->top->data;
         bool curr_isTerminal = curr_var->isTerminal;
-        printf("%d %d\n", curr_var->varNum, token->varNum);
-        bool is_ERROR = (!curr_isTerminal && strcmp(matrix[curr_var->varNum][token->varNum]->headNode->v->name, ERROR->headNode->v->name));
-        bool is_SYN = (!curr_isTerminal && strcmp(matrix[curr_var->varNum][token->varNum]->headNode->v->name, SYN->headNode->v->name));
+        printf("%s %s\n", curr_var->name, token->name);
+        bool is_ERROR = (!curr_isTerminal && !strcmp(matrix[curr_var->varNum][token->varNum]->headNode->v->name, ERROR->headNode->v->name));
+        bool is_SYN = (!curr_isTerminal && !strcmp(matrix[curr_var->varNum][token->varNum]->headNode->v->name, SYN->headNode->v->name));
         // printf("xyz\n");
 
         if (curr_isTerminal && curr_var->varNum == token->varNum)
@@ -788,22 +821,13 @@ TreeNode *parser(token_input *token)
             printf("MATCHED - %s %s \n", curr_var->name, token->name);
             if (!isEmpty(st))
                 pop(st);
+
+            printf("check segfault for tree line 824 %s %s\n", curr_child->data->name, curr_child->parent->data->name);
+            if (token->next_token != NULL)
+            {
+                curr_child = returnNextNode(curr_child);
+            }
             token = token->next_token;
-            // if (curr_child->nextSibling == NULL)
-            // {
-            //     while (curr_parent->nextSibling == NULL)
-            //     {
-            //         curr_child = curr_child->parent;
-            //         curr_parent = curr_child->parent;
-            //     }
-            //     curr_child = curr_child->nextSibling;
-            //     curr_parent = curr_child->parent;
-            // }
-            // else
-            // {
-            //     curr_child = curr_child->nextSibling;
-            //     curr_parent = curr_child->parent;
-            // }
             continue;
         }
         if (curr_isTerminal || is_ERROR || is_SYN)
@@ -811,68 +835,43 @@ TreeNode *parser(token_input *token)
             if (is_SYN)
             {
                 pop(st);
-                printf("IN SYN\n");
-                // if (curr_child->nextSibling == NULL)
-                // {
-                //     while (curr_parent->nextSibling == NULL)
-                //     {
-                //         curr_child = curr_child->parent;
-                //         curr_parent = curr_child->parent;
-                //     }
-                //     curr_child = curr_child->nextSibling;
-                //     curr_parent = curr_child->parent;
-                // }
-                // else
-                // {
-                //     curr_child = curr_child->nextSibling;
-                //     curr_parent = curr_child->parent;
-                // }
+                printf("IN SYN bool value - %d stack top - %s token name %s\n", is_SYN, curr_var->name, token->name);
+                curr_child = returnNextNode(curr_child);
             }
             else
             {
                 printf("ERROR in Parsing for token %s at line number %d \n", token->name, token->linenum);
                 token = token->next_token;
-                // TreeNode *new_child = createTreeNode(ERROR_var);
-                // addChild(curr_child, new_child);
-                // curr_child = curr_child->firstChild;
-                // if (curr_child->nextSibling == NULL)
-                // {
-                //     while (curr_parent->nextSibling == NULL)
-                //     {
-                //         curr_child = curr_child->parent;
-                //         curr_parent = curr_child->parent;
-                //     }
-                //     curr_child = curr_child->nextSibling;
-                //     curr_parent = curr_child->parent;
-                // }
-                // else
-                // {
-                //     curr_child = curr_child->nextSibling;
-                //     curr_parent = curr_child->parent;
-                // }
+                TreeNode *new_child = createTreeNode(ERROR_var);
+                addChild(curr_child, new_child);
             }
 
             continue;
         }
-        printf("Check for segfault pre temp declaration \n");
+        // printf("Check for segfault pre temp declaration \n");
 
         varNode *rule_to_push = matrix[curr_var->varNum][token->varNum]->headNode;
         Stack *temp = initializeStack();
-        printf("Check for segfault post temp declaration \n");
+        // printf("Check for segfault post temp declaration \n");
         int j = 0;
+        printf("check segfault for tree 852\n");
         while (rule_to_push != NULL)
         {
             push(temp, rule_to_push->v);
-            rule_to_push = rule_to_push->next;
             printf("%d\n", j);
             j++;
-            // TreeNode *new_child = createTreeNode(rule_to_push->v);
-            // addChild(curr_child, new_child);
+            printf("check segfault for tree 859\n");
+            TreeNode *new_child = createTreeNode(rule_to_push->v);
+            printf("check segfault for tree 861 %s\n", new_child->data->name);
+            addChild(curr_child, new_child);
+            printf("check segfault for tree 863\n");
+            rule_to_push = rule_to_push->next;
         }
-        // curr_child = curr_child->firstChild;
-        // curr_parent = curr_child->parent;
-        printf("Check for segfault post pushing in temp \n");
+        curr_child = curr_child->firstChild;
 
+        // printf("Check for segfault post pushing in temp \n");
+        printf("popping out: %s\n", st->top->data->name);
+        pop(st);
         while (!isEmpty(temp))
         {
             variable *v;

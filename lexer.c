@@ -1673,7 +1673,7 @@ int main()
 	assignNumToTokens(parser_input_head);
 	
 	TreeNode *root = parser(parser_input_head->next_token);
-	// printTree(root, 0);
+	printTree(root, 0);
 
 	for (int i = 0; i < TERMINALS; i++)
 	{

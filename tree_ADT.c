@@ -48,25 +48,19 @@ void printSpaces(int n)
 {
     for (int i = 0; i < n; i++)
     {
-        printf(" ");
+        printf("--");
     }
 }
-
 void printTree(TreeNode *root, int depth)
 {
     if (root == NULL)
         return;
 
     // Print the current node
-    printSpaces(depth * 4);
-    if (root->data->isTerminal)
-    {
-        printf("%s", root->data->name);
-    }
-    else
-    {
-        printf("%s\n", root->data->name);
-    }
+    printSpaces(depth * 2);
+    if (depth > 0)
+        printf("     ");
+    printf("%s\n", root->data->name);
 
     // Recursively print the children
     TreeNode *child = root->firstChild;
@@ -76,6 +70,30 @@ void printTree(TreeNode *root, int depth)
         child = child->nextSibling;
     }
 }
+// void printTree(TreeNode *root, int depth)
+// {
+//     if (root == NULL)
+//         return;
+
+//     // Print the current node
+//     printSpaces(depth * 4);
+//     if (root->data->isTerminal)
+//     {
+//         printf("%s", root->data->name);
+//     }
+//     else
+//     {
+//         printf("%s\n", root->data->name);
+//     }
+
+//     // Recursively print the children
+//     TreeNode *child = root->firstChild;
+//     while (child != NULL)
+//     {
+//         printTree(child, depth + 1);
+//         child = child->nextSibling;
+//     }
+// }
 
 void freeTreeNode(TreeNode *node)
 {

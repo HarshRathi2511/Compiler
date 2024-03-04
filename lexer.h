@@ -7,7 +7,7 @@
 #include "lexerDef.h"
 
 char *Find_Comment_Symbol( char comment, const char *readBuffer);
-void Remove_Comments(const char *TestCaseFile, const char *CleanTestCaseFile);
+void Remove_Comments( char *TestCaseFile,  char *CleanTestCaseFile);
 unsigned int hash(char* key);
 void insert(char* key, TOKEN_TYPE value);
 Entry* search(char* key);

@@ -25,24 +25,11 @@ char *Find_Comment_Symbol(char comment, const char *readBuffer)
 	return NULL;
 }
 
-void Remove_Comments(const char *TestCaseFile, const char *CleanTestCaseFile)
+void Remove_Comments(char *inputFile, char *outputFile)
 {
-
-	FILE *out = fopen(CleanTestCaseFile, "w");
-	FILE *in = fopen(TestCaseFile, "r");
 	char readBuffer[len];
-
-	if (in == NULL)
-	{
-		printf("Input File Opening Error.\n");
-		exit(1);
-	}
-	if (out == NULL)
-	{
-		printf("Output File Opening Error.\n");
-		exit(1);
-	}
-
+	FILE *in = fopen(inputFile, "r");
+	FILE *out = fopen(outputFile, "w");
 	while (fgets(readBuffer, sizeof(readBuffer), in) != NULL)
 	{
 		// find a % (comment symbol) by traversing
@@ -50,12 +37,12 @@ void Remove_Comments(const char *TestCaseFile, const char *CleanTestCaseFile)
 		int no = 1;
 		char comment[2000];
 		char *com_ptr = Find_Comment_Symbol('%', readBuffer);
-		comment_sign = "%";
-		if (comment_sign != "%")
-		{
-			// comment="\n";
-			break;
-		}
+		// comment_sign = "%";
+		// if (comment_sign != "%")
+		// {
+		// 	// comment="\n";
+		// 	break;
+		// }
 		if (com_ptr != NULL)
 		{
 			// if % exists, replace everything after that symbol with \n
@@ -758,7 +745,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 			// accept state for &&&
 			state = 1;
 			token->lexeme[i] = '\0';
-			token->token_type = TK_NOT;
+			token->token_type = TK_AND;
 			token->line_number = line_number;
 
 			return token;
@@ -1588,103 +1575,103 @@ TOKEN *getNextToken(TwinBuffer *tb)
 	return NULL;
 }
 
-int main()
-{
-	TwinBuffer twinBuffer;
-	FILE *inputFile = fopen("t4.txt", "r");
-	if (inputFile == NULL)
-	{
-		fprintf(stderr, "Error opening input file.\n");
-		return 1;
-	}
+// int main()
+// {
+// 	TwinBuffer twinBuffer;
+// 	FILE *inputFile = fopen("t4.txt", "r");
+// 	if (inputFile == NULL)
+// 	{
+// 		fprintf(stderr, "Error opening input file.\n");
+// 		return 1;
+// 	}
 
-	if (setupLexer(&twinBuffer, inputFile) != 0)
-	{
-		fprintf(stderr, "Error setting up lexer.\n");
-		fclose(inputFile);
-		return 1;
-	}
+// 	if (setupLexer(&twinBuffer, inputFile) != 0)
+// 	{
+// 		fprintf(stderr, "Error setting up lexer.\n");
+// 		fclose(inputFile);
+// 		return 1;
+// 	}
 
-	AddtoHashTable();
-	parser_input_head = (token_input *)malloc(sizeof(token_input));
+// 	AddtoHashTable();
+// 	parser_input_head = (token_input *)malloc(sizeof(token_input));
 
-	token_input *curr = parser_input_head;
+// 	token_input *curr = parser_input_head;
 
-	while (true)
-	{
-		TOKEN *token = getNextToken(&twinBuffer);
-		if (token->isEOF)
-		{
-			break;
-		}
-		if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
-		{
-			token_input *new_token = (token_input *)malloc(sizeof(token_input));
+// 	while (true)
+// 	{
+// 		TOKEN *token = getNextToken(&twinBuffer);
+// 		if (token->isEOF)
+// 		{
+// 			break;
+// 		}
+// 		if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
+// 		{
+// 			token_input *new_token = (token_input *)malloc(sizeof(token_input));
 
-			new_token->linenum = token->line_number;
-			strcpy(new_token->name, token_type_to_string(token->token_type));
-			curr->next_token = new_token;
-			curr = new_token;
-		}
+// 			new_token->linenum = token->line_number;
+// 			strcpy(new_token->name, token_type_to_string(token->token_type));
+// 			curr->next_token = new_token;
+// 			curr = new_token;
+// 		}
 
-		printToken(token);
-	}
-	// curr = parser_input_head->next_token;
-	// int i = 1;
+// 		printToken(token);
+// 	}
+// 	// curr = parser_input_head->next_token;
+// 	// int i = 1;
 
-	// while (curr != NULL)
-	// {
-	// 	printf("%d. %s\n", i, curr->name);
-	// 	i++;
-	// 	curr = curr->next_token;
-	// }
+// 	// while (curr != NULL)
+// 	// {
+// 	// 	printf("%d. %s\n", i, curr->name);
+// 	// 	i++;
+// 	// 	curr = curr->next_token;
+// 	// }
 
-	// invoke your lexer and parser here
-	populateTerminals("terminals.txt");
-	populateNonTerminals("non_terminals.txt");
-	// test();
-	// printTerminals();
-	// printNonTerminals();
-	fill_epsilon();
-	readGrammar("grammar.txt");
-	// printf("read_grammar successfully worked!");
-	// printGrammar();
-	// print_epsilon();
-	// Free dynamically allocated memory
-	// printf("%d \n",epsilon[0]);
-	// printf("CHECK FOR SEGFAULT before populate first\n");
-	populateFirst();
-	epsilonFirst();
-	// test_first();
-	// printf("read_grammar successfully pre\n!");
-	populateFollow();
-	// printf("read_grammar successfully pst\n");
-	// test_follow();
-	// printf("CHECK FOR SEGFAULT after TEST FOLLOW \n");
-	initializeErrorTokens();
-	// printf("CHECK FOR SEGFAULT after Initialise error tokens \n");
-	fillMatrix();
-	// printf("CHECK FOR SEGFAULT after fill matrix \n");
-	// printf("MATRIX CHECKING %d \n", matrix[1][40] == NULL);
-	// printf("reached");
-	// exportToCSV();
-	// printMatrix();
-	// printf("reached");
-	assignNumToTokens(parser_input_head);
+// 	// invoke your lexer and parser here
+// 	// populateTerminals("terminals.txt");
+// 	// populateNonTerminals("non_terminals.txt");
+// 	// // test();
+// 	// // printTerminals();
+// 	// // printNonTerminals();
+// 	// fill_epsilon();
+// 	// readGrammar("grammar.txt");
+// 	// // printf("read_grammar successfully worked!");
+// 	// // printGrammar();
+// 	// // print_epsilon();
+// 	// // Free dynamically allocated memory
+// 	// // printf("%d \n",epsilon[0]);
+// 	// // printf("CHECK FOR SEGFAULT before populate first\n");
+// 	// populateFirst();
+// 	// epsilonFirst();
+// 	// // test_first();
+// 	// // printf("read_grammar successfully pre\n!");
+// 	// populateFollow();
+// 	// // printf("read_grammar successfully pst\n");
+// 	// // test_follow();
+// 	// // printf("CHECK FOR SEGFAULT after TEST FOLLOW \n");
+// 	// initializeErrorTokens();
+// 	// // printf("CHECK FOR SEGFAULT after Initialise error tokens \n");
+// 	// fillMatrix();
+// 	// // printf("CHECK FOR SEGFAULT after fill matrix \n");
+// 	// // printf("MATRIX CHECKING %d \n", matrix[1][40] == NULL);
+// 	// // printf("reached");
+// 	// // exportToCSV();
+// 	// // printMatrix();
+// 	// // printf("reached");
+// 	// assignNumToTokens(parser_input_head);
 	
-	TreeNode *root = parser(parser_input_head->next_token);
-	printTree(root, 0);
+// 	// TreeNode *root = parser(parser_input_head->next_token);
+// 	// printTree(root, 0);
 
-	for (int i = 0; i < TERMINALS; i++)
-	{
-		free(terminal_array[i]);
-	}
-	for (int i = 0; i < NON_TERMINALS; i++)
-	{
-		free(non_terminal_array[i]);
-	}
+// 	// for (int i = 0; i < TERMINALS; i++)
+// 	// {
+// 	// 	free(terminal_array[i]);
+// 	// }
+// 	// for (int i = 0; i < NON_TERMINALS; i++)
+// 	// {
+// 	// 	free(non_terminal_array[i]);
+// 	// }
 
-	fclose(inputFile);
+// 	// fclose(inputFile);
 
-	return 0;
-}
+// 	return 0;
+// }

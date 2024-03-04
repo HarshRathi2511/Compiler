@@ -785,7 +785,12 @@ void parser(token_input *token)
     {
         // If the stack's top has epsilon
         // printf("%d \t", i);
-        if (st->top->data->isTerminal && st->top->data->varNum == 57)
+        if (isEmpty(st))
+        {
+            printf("Line %d Error: Invalid token %s encountered with value %s stack top EMPTY - ERROR\n", token->linenum, token->name, token->value);
+            return;
+        }
+        if (!isEmpty(st) && st->top->data->isTerminal && st->top->data->varNum == 57)
         {
             pop(st);
             curr_child = returnNextNode(curr_child);
@@ -835,8 +840,18 @@ void parser(token_input *token)
             }
             if (is_ERROR)
             {
-                printf("Line %d Error: Invalid token %s encountered with value %s stack top %s ERROR\n", token->linenum, token->name, token->value, curr_var->name);
+
                 // token = token->next_token;
+                if (epsilon[curr_var->varNum])
+                {
+                    pop(st);
+                    parser(token);
+                }
+                else
+                {
+                    printf("Line %d Error: Invalid token %s encountered with value %s stack top %s ERROR\n", token->linenum, token->name, token->value, curr_var->name);
+                }
+
                 TreeNode *new_child = createTreeNode(ERROR_var);
                 addChild(curr_child, new_child);
             }

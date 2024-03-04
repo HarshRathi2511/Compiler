@@ -40,6 +40,7 @@ typedef struct token_input
     int linenum;
     char name[30];
     int varNum;
+    char value[100];
     struct token_input *next_token;
 } token_input;
 

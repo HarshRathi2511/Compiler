@@ -805,9 +805,9 @@ TreeNode *parser(token_input *token)
         token_input *curr = token;
 
         // If stacks top has dollar
-        if (st->top->data->isTerminal && st->top->data->varNum == 1)
+        if (st->top->data->isTerminal && st->top->data->varNum == 0)
         {
-            printf("Error in parsing, no more non-terminals\n");
+            printf("Error in parsing, no more non-terminals in stack\n");
         }
         variable *curr_var = st->top->data;
         bool curr_isTerminal = curr_var->isTerminal;
@@ -835,17 +835,26 @@ TreeNode *parser(token_input *token)
             if (is_SYN)
             {
                 pop(st);
-                printf("IN SYN bool value - %d stack top - %s token name %s\n", is_SYN, curr_var->name, token->name);
+                printf("SYN Line %d Error: Invalid token %s encountered with value %s stack top %s", token->linenum, token->name, token->value, curr_var->name);
                 curr_child = returnNextNode(curr_child);
             }
-            else
+            else if (is_ERROR)
             {
-                printf("ERROR in Parsing for token %s at line number %d \n", token->name, token->linenum);
+                printf("ERROR Line %d Error: Invalid token %s encountered with value %s stack top %s", token->linenum, token->name, token->value, curr_var->name);
                 token = token->next_token;
                 TreeNode *new_child = createTreeNode(ERROR_var);
                 addChild(curr_child, new_child);
             }
-
+            else if (curr_isTerminal)
+            {
+                printf("Line %d Error: The token %s for lexeme %s  does not match with the expected token %s\n", token->linenum, token->name, token->value, curr_var->name);
+                pop(st);
+                token = token->next_token;
+            }
+            /*
+            Line 10 Error: Invalid token TK_SEM encountered with value ; stack top arithmeticExpression
+            Line 11 Error: The token TK_SEM for lexeme ;  does not match with the expected token TK_CL
+            */
             continue;
         }
         // printf("Check for segfault pre temp declaration \n");

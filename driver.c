@@ -12,12 +12,43 @@
 #include "tree_ADT.h"
 #include "lexer.h"
 #include <time.h>
-int main()
+int main(int argc, char *argv[])
 {
 	TwinBuffer twinBuffer;
 
-	char *inputFileChar = "t1.txt";
-	char *outputFileChar = "output.txt";
+	char *inputFileChar;
+	char *outputFileChar;
+
+	// Check if the correct number of arguments are provided
+	if (argc != 3)
+	{
+		printf("Usage: %s <inputFile> <outputFile>\n", argv[0]);
+		return 1;
+	}
+
+	inputFileChar = argv[1];
+	outputFileChar = argv[2];
+
+	// Check if input file name is empty
+	if (strlen(inputFileChar) == 0)
+	{
+		printf("Error: Input file name cannot be empty\n");
+		return 1;
+	}
+
+	// Check if output file name is empty
+	if (strlen(outputFileChar) == 0)
+	{
+		printf(RED "Error: Output file name cannot be empty\n");
+		return 1;
+	}
+
+	// Check format of input files
+	if (strstr(inputFileChar, ".txt") == NULL || strstr(outputFileChar, ".txt") == NULL)
+	{
+		printf(RED "Error: Files should be of .txt format\n");
+		return 1;
+	}
 
 	AddtoHashTable();
 
@@ -158,7 +189,7 @@ int main()
 				}
 			}
 			//! call print here
-			// printTree(root, 0);
+			printTree(root);
 
 			fclose(inputFile);
 			fclose(outputFile);

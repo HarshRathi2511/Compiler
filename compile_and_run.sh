@@ -10,4 +10,6 @@ gcc -c lexer.c -o lexer.o
 gcc stack_ADT.o tree_ADT.o lexer.o firstandfollow.o -o program
 
 # Run the executable
-./program
+# ./program
+
+# rm *.o

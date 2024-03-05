@@ -146,64 +146,171 @@ void AddtoHashTable()
 
 // endhash
 
-void initTwinBuffer(TwinBuffer *tb)
+int getCurrBuffPtr(TwinBuffer *tb)
 {
-	tb->buf = malloc(sizeof(char) * (BUF_SIZE * 2));
-	memset(tb->buf, 0, BUF_SIZE * 2);
-	tb->fwd = 0;
-	tb->lastBufLoad = 0;
+	return tb->fwd % (2 * BUF_SIZE);
 }
 
-void bufferLoader(TwinBuffer *tb, bool loadFirst)
-{
-	char *bufferPosition = loadFirst ? tb->buf : tb->buf + BUF_SIZE;
-	size_t bytesRead = fread(bufferPosition, sizeof(char), BUF_SIZE, tb->fp);
+int getMaxBufSize(){
+	return 512;
+}
+
+void initTwinBuffer(TwinBuffer *tb)
+{   
+	int buff_size = getMaxBufSize();
+	tb->buf = malloc(sizeof(char) * (buff_size * 2));
+	memset(tb->buf, 0, buff_size * 2);
+	tb->fwd = 0;
+	tb->isLastBuffer = 0;
+}
+
+void bufferLoader(TwinBuffer *tb, bool flag)
+{   
+	int buff_size = getMaxBufSize();
+	char *bufferPosition = flag ? tb->buf : tb->buf + buff_size;
+	size_t bytesRead = fread(bufferPosition, sizeof(char), buff_size, tb->fp);
 
 	// If fewer characters were read than the buffer size, mark the end of the buffer with EOF
-	if (bytesRead < BUF_SIZE)
+	if (bytesRead < buff_size)
 	{
 		bufferPosition[bytesRead] = EOF;
 	}
 }
 
-void checkAndLoadBuffer(TwinBuffer *tb)
+TOKEN_TYPE string_to_token_type(const char *str)
 {
+	if (strcmp(str, "TK_EQ") == 0)
+		return TK_EQ;
+	if (strcmp(str, "TK_NE") == 0)
+		return TK_NE;
+	if (strcmp(str, "TK_NOT") == 0)
+		return TK_NOT;
+	if (strcmp(str, "TK_AND") == 0)
+		return TK_AND;
+	if (strcmp(str, "TK_OR") == 0)
+		return TK_OR;
+	if (strcmp(str, "TK_PLUS") == 0)
+		return TK_PLUS;
+	if (strcmp(str, "TK_MINUS") == 0)
+		return TK_MINUS;
+	if (strcmp(str, "TK_MUL") == 0)
+		return TK_MUL;
+	if (strcmp(str, "TK_DIV") == 0)
+		return TK_DIV;
+	if (strcmp(str, "TK_DOT") == 0)
+		return TK_DOT;
+	if (strcmp(str, "TK_COMMA") == 0)
+		return TK_COMMA;
+	if (strcmp(str, "TK_COLON") == 0)
+		return TK_COLON;
+	if (strcmp(str, "TK_SEM") == 0)
+		return TK_SEM;
+	if (strcmp(str, "TK_CL") == 0)
+		return TK_CL;
+	if (strcmp(str, "TK_OP") == 0)
+		return TK_OP;
+	if (strcmp(str, "TK_SQR") == 0)
+		return TK_SQR;
+	if (strcmp(str, "TK_SQL") == 0)
+		return TK_SQL;
+	if (strcmp(str, "TK_COMMENT") == 0)
+		return TK_COMMENT;
+	if (strcmp(str, "TK_GT") == 0)
+		return TK_GT;
+	if (strcmp(str, "TK_GE") == 0)
+		return TK_GE;
+	if (strcmp(str, "TK_LT") == 0)
+		return TK_LT;
+	if (strcmp(str, "TK_LE") == 0)
+		return TK_LE;
+	if (strcmp(str, "TK_ASSIGNOP") == 0)
+		return TK_ASSIGNOP;
+	if (strcmp(str, "TK_FUNID") == 0)
+		return TK_FUNID;
+	if (strcmp(str, "TK_FIELDID") == 0)
+		return TK_FIELDID;
+	if (strcmp(str, "TK_RUID") == 0)
+		return TK_RUID;
+	if (strcmp(str, "TK_ID") == 0)
+		return TK_ID;
+	if (strcmp(str, "TK_NUM") == 0)
+		return TK_NUM;
+	if (strcmp(str, "TK_RNUM") == 0)
+		return TK_RNUM;
+	if (strcmp(str, "TK_ELSE") == 0)
+		return TK_ELSE;
+	if (strcmp(str, "TK_ENDRECORD") == 0)
+		return TK_ENDRECORD;
+	if (strcmp(str, "TK_RECORD") == 0)
+		return TK_RECORD;
+	if (strcmp(str, "TK_WITH") == 0)
+		return TK_WITH;
+	if (strcmp(str, "TK_PARAMETERS") == 0)
+		return TK_PARAMETERS;
+	if (strcmp(str, "TK_END") == 0)
+		return TK_END;
+	if (strcmp(str, "TK_WHILE") == 0)
+		return TK_WHILE;
+	if (strcmp(str, "TK_UNION") == 0)
+		return TK_UNION;
+	if (strcmp(str, "TK_ENDUNION") == 0)
+		return TK_ENDUNION;
+	if (strcmp(str, "TK_DEFINETYPE") == 0)
+		return TK_DEFINETYPE;
+	if (strcmp(str, "TK_AS") == 0)
+		return TK_AS;
+	if (strcmp(str, "TK_TYPE") == 0)
+		return TK_TYPE;
+	if (strcmp(str, "TK_MAIN") == 0)
+		return TK_MAIN;
+	if (strcmp(str, "TK_GLOBAL") == 0)
+		return TK_GLOBAL;
+	if (strcmp(str, "TK_PARAMETER") == 0)
+		return TK_PARAMETER;
+	if (strcmp(str, "TK_LIST") == 0)
+		return TK_LIST;
+	if (strcmp(str, "TK_INPUT") == 0)
+		return TK_INPUT;
+	if (strcmp(str, "TK_OUTPUT") == 0)
+		return TK_OUTPUT;
+	if (strcmp(str, "TK_INT") == 0)
+		return TK_INT;
+	if (strcmp(str, "TK_REAL") == 0)
+		return TK_REAL;
+	if (strcmp(str, "TK_IF") == 0)
+		return TK_IF;
+	if (strcmp(str, "TK_THEN") == 0)
+		return TK_THEN;
+	if (strcmp(str, "TK_ENDWHILE") == 0)
+		return TK_ENDWHILE;
+	if (strcmp(str, "TK_ENDIF") == 0)
+		return TK_ENDIF;
+	if (strcmp(str, "TK_READ") == 0)
+		return TK_READ;
+	if (strcmp(str, "TK_WRITE") == 0)
+		return TK_WRITE;
+	if (strcmp(str, "TK_RETURN") == 0)
+		return TK_RETURN;
+	if (strcmp(str, "TK_CALL") == 0)
+		return TK_CALL;
+	return TK_UNKNOWN;
+}
+
+void checkAndLoadBuffer(TwinBuffer *tb)
+{   
+	int buff_size = getMaxBufSize(); 
 	// Check if the current position is at the end of the first buffer and the last buffer hasn't been loaded yet
-	if ((tb->fwd % (2 * BUF_SIZE)) == (BUF_SIZE - 1) && !tb->lastBufLoad)
+	if (getCurrBuffPtr(tb) == (buff_size - 1) && !tb->isLastBuffer)
 	{
 		bufferLoader(tb, false);
-		tb->lastBufLoad = 1;
+		tb->isLastBuffer = 1;
 	}
 	// Check if the current position is at the end of the second buffer and the last buffer has been loaded
-	else if ((tb->fwd % (2 * BUF_SIZE)) == (2 * BUF_SIZE - 1) && tb->lastBufLoad)
+	else if (getCurrBuffPtr(tb) == (2 * buff_size - 1) && tb->isLastBuffer)
 	{
 		bufferLoader(tb, true);
-		tb->lastBufLoad = 0;
+		tb->isLastBuffer = 0;
 	}
-}
-
-void printBufferContents(TwinBuffer *tb)
-{
-	int i;
-	for (i = 0; i < 2 * BUF_SIZE; i++)
-	{
-		if (tb->buf[i] != EOF)
-		{
-			printf("%c", tb->buf[i]);
-		}
-		else
-		{
-			break; // Stop printing once EOF is encountered
-		}
-	}
-}
-
-int setupLexer(TwinBuffer *tb, FILE *fp)
-{
-	tb->fp = fp;
-	initTwinBuffer(tb);
-	bufferLoader(tb, true);
-	return 0;
 }
 
 const char *token_type_to_string(TOKEN_TYPE token)
@@ -331,124 +438,32 @@ const char *token_type_to_string(TOKEN_TYPE token)
 	}
 }
 
-TOKEN_TYPE string_to_token_type(const char *str)
+
+void printBufferContents(TwinBuffer *tb)
 {
-	if (strcmp(str, "TK_EQ") == 0)
-		return TK_EQ;
-	if (strcmp(str, "TK_NE") == 0)
-		return TK_NE;
-	if (strcmp(str, "TK_NOT") == 0)
-		return TK_NOT;
-	if (strcmp(str, "TK_AND") == 0)
-		return TK_AND;
-	if (strcmp(str, "TK_OR") == 0)
-		return TK_OR;
-	if (strcmp(str, "TK_PLUS") == 0)
-		return TK_PLUS;
-	if (strcmp(str, "TK_MINUS") == 0)
-		return TK_MINUS;
-	if (strcmp(str, "TK_MUL") == 0)
-		return TK_MUL;
-	if (strcmp(str, "TK_DIV") == 0)
-		return TK_DIV;
-	if (strcmp(str, "TK_DOT") == 0)
-		return TK_DOT;
-	if (strcmp(str, "TK_COMMA") == 0)
-		return TK_COMMA;
-	if (strcmp(str, "TK_COLON") == 0)
-		return TK_COLON;
-	if (strcmp(str, "TK_SEM") == 0)
-		return TK_SEM;
-	if (strcmp(str, "TK_CL") == 0)
-		return TK_CL;
-	if (strcmp(str, "TK_OP") == 0)
-		return TK_OP;
-	if (strcmp(str, "TK_SQR") == 0)
-		return TK_SQR;
-	if (strcmp(str, "TK_SQL") == 0)
-		return TK_SQL;
-	if (strcmp(str, "TK_COMMENT") == 0)
-		return TK_COMMENT;
-	if (strcmp(str, "TK_GT") == 0)
-		return TK_GT;
-	if (strcmp(str, "TK_GE") == 0)
-		return TK_GE;
-	if (strcmp(str, "TK_LT") == 0)
-		return TK_LT;
-	if (strcmp(str, "TK_LE") == 0)
-		return TK_LE;
-	if (strcmp(str, "TK_ASSIGNOP") == 0)
-		return TK_ASSIGNOP;
-	if (strcmp(str, "TK_FUNID") == 0)
-		return TK_FUNID;
-	if (strcmp(str, "TK_FIELDID") == 0)
-		return TK_FIELDID;
-	if (strcmp(str, "TK_RUID") == 0)
-		return TK_RUID;
-	if (strcmp(str, "TK_ID") == 0)
-		return TK_ID;
-	if (strcmp(str, "TK_NUM") == 0)
-		return TK_NUM;
-	if (strcmp(str, "TK_RNUM") == 0)
-		return TK_RNUM;
-	if (strcmp(str, "TK_ELSE") == 0)
-		return TK_ELSE;
-	if (strcmp(str, "TK_ENDRECORD") == 0)
-		return TK_ENDRECORD;
-	if (strcmp(str, "TK_RECORD") == 0)
-		return TK_RECORD;
-	if (strcmp(str, "TK_WITH") == 0)
-		return TK_WITH;
-	if (strcmp(str, "TK_PARAMETERS") == 0)
-		return TK_PARAMETERS;
-	if (strcmp(str, "TK_END") == 0)
-		return TK_END;
-	if (strcmp(str, "TK_WHILE") == 0)
-		return TK_WHILE;
-	if (strcmp(str, "TK_UNION") == 0)
-		return TK_UNION;
-	if (strcmp(str, "TK_ENDUNION") == 0)
-		return TK_ENDUNION;
-	if (strcmp(str, "TK_DEFINETYPE") == 0)
-		return TK_DEFINETYPE;
-	if (strcmp(str, "TK_AS") == 0)
-		return TK_AS;
-	if (strcmp(str, "TK_TYPE") == 0)
-		return TK_TYPE;
-	if (strcmp(str, "TK_MAIN") == 0)
-		return TK_MAIN;
-	if (strcmp(str, "TK_GLOBAL") == 0)
-		return TK_GLOBAL;
-	if (strcmp(str, "TK_PARAMETER") == 0)
-		return TK_PARAMETER;
-	if (strcmp(str, "TK_LIST") == 0)
-		return TK_LIST;
-	if (strcmp(str, "TK_INPUT") == 0)
-		return TK_INPUT;
-	if (strcmp(str, "TK_OUTPUT") == 0)
-		return TK_OUTPUT;
-	if (strcmp(str, "TK_INT") == 0)
-		return TK_INT;
-	if (strcmp(str, "TK_REAL") == 0)
-		return TK_REAL;
-	if (strcmp(str, "TK_IF") == 0)
-		return TK_IF;
-	if (strcmp(str, "TK_THEN") == 0)
-		return TK_THEN;
-	if (strcmp(str, "TK_ENDWHILE") == 0)
-		return TK_ENDWHILE;
-	if (strcmp(str, "TK_ENDIF") == 0)
-		return TK_ENDIF;
-	if (strcmp(str, "TK_READ") == 0)
-		return TK_READ;
-	if (strcmp(str, "TK_WRITE") == 0)
-		return TK_WRITE;
-	if (strcmp(str, "TK_RETURN") == 0)
-		return TK_RETURN;
-	if (strcmp(str, "TK_CALL") == 0)
-		return TK_CALL;
-	return TK_UNKNOWN;
+	int i;
+		int buff_size = getMaxBufSize(); 
+	for (i = 0; i < 2 * buff_size; i++)
+	{
+		if (tb->buf[i] != EOF)
+		{
+			// printf("%c", tb->buf[i]);
+		}
+		else
+		{
+			break; // Stop printing once EOF is encountered
+		}
+	}
 }
+
+int setupLexer(TwinBuffer *tb, FILE *fp)
+{
+	tb->fp = fp;
+	initTwinBuffer(tb);
+	bufferLoader(tb, true);
+	return 0;
+}
+
 void printToken(const TOKEN *token)
 {
 	if (token->token_type == TK_ERROR)
@@ -1616,7 +1631,7 @@ int main()
 		{
 			printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
 		}
-		// printToken(token);
+		printToken(token);
 		if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
 		{
 			token_input *new_token = (token_input *)malloc(sizeof(token_input));

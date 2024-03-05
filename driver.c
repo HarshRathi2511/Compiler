@@ -15,32 +15,21 @@
 int main()
 {
 	TwinBuffer twinBuffer;
+
 	char *inputFileChar = "t1.txt";
 	char *outputFileChar = "output.txt";
-	FILE *inputFile = fopen(inputFileChar, "r");
-	FILE *outputFile = fopen(outputFileChar, "w"); // Open file for writing tokens
-	if (inputFile == NULL || outputFile == NULL)
-	{
-		fprintf(stderr, "Error opening input or output file.\n");
-		return 1;
-	}
-	// Remove_Comments(inputFile, outputFile);
-	//         printf("ALL THE COMMENTS IN THE TESTCASE FILE ARE SUCESSFULLY REMOVED.\n");
-
-	if (setupLexer(&twinBuffer, inputFile) != 0)
-	{
-		fprintf(stderr, "Error setting up lexer.\n");
-		fclose(inputFile);
-		fclose(outputFile);
-		return 1;
-	}
 
 	AddtoHashTable();
 
 	int input;
 	do
 	{
-		// global_vars(); // Initialization of the global variables
+
+		clock_t start_time, end_time;
+
+		double total_CPU_time, total_CPU_time_in_seconds;
+
+		start_time = clock();
 
 		printf("\n\n###### CHOOSE AN OPTION ###### \n\n");
 		printf("0: EXIT\n");
@@ -49,6 +38,7 @@ int main()
 		printf("3: Run Parser, Print all errors on the console  and print Parse Tree in a file \n");
 		printf("4: Total Compiling Time\n");
 		printf("Enter Your Choice : ");
+		// global_vars(); // Initialization of the global variables
 		scanf("%d", &input);
 		printf("\n");
 		switch (input)
@@ -63,11 +53,30 @@ int main()
 		{
 			Remove_Comments(inputFileChar, outputFileChar);
 			printf("ALL THE COMMENTS IN THE TESTCASE FILE ARE SUCESSFULLY REMOVED.\n");
+			// print the time for printing the tokens
 			break;
 		}
 
 		case 2:
 		{
+
+			FILE *inputFile = fopen(inputFileChar, "r");
+			FILE *outputFile = fopen(outputFileChar, "w"); // Open file for writing tokens
+			if (inputFile == NULL || outputFile == NULL)
+			{
+				fprintf(stderr, "Error opening input or output file.\n");
+				return 1;
+			}
+			// Remove_Comments(inputFile, outputFile);
+			//         printf("ALL THE COMMENTS IN THE TESTCASE FILE ARE SUCESSFULLY REMOVED.\n");
+
+			if (setupLexer(&twinBuffer, inputFile) != 0)
+			{
+				fprintf(stderr, "Error setting up lexer.\n");
+				fclose(inputFile);
+				fclose(outputFile);
+				return 1;
+			}
 			while (true)
 			{
 				TOKEN *token = getNextToken(&twinBuffer);
@@ -77,10 +86,36 @@ int main()
 				}
 				printToken(token);
 			}
+
+			fclose(inputFile);
+			fclose(outputFile);
+
+			// for new instance of running the lexer
+			//! add the global variables here
+			// line_number = 1;
+			// state = 1;
+
 			break;
 		}
 		case 3:
 		{
+			FILE *inputFile = fopen(inputFileChar, "r");
+			FILE *outputFile = fopen(outputFileChar, "w"); // Open file for writing tokens
+			if (inputFile == NULL || outputFile == NULL)
+			{
+				fprintf(stderr, "Error opening input or output file.\n");
+				return 1;
+			}
+			// Remove_Comments(inputFile, outputFile);
+			//         printf("ALL THE COMMENTS IN THE TESTCASE FILE ARE SUCESSFULLY REMOVED.\n");
+
+			if (setupLexer(&twinBuffer, inputFile) != 0)
+			{
+				fprintf(stderr, "Error setting up lexer.\n");
+				fclose(inputFile);
+				fclose(outputFile);
+				return 1;
+			}
 			populateTerminals("terminals.txt");
 			populateNonTerminals("non_terminals.txt");
 			fill_epsilon();
@@ -122,7 +157,11 @@ int main()
 					parser(new_token);
 				}
 			}
+			//! call print here
 			// printTree(root, 0);
+
+			fclose(inputFile);
+			fclose(outputFile);
 		}
 
 		case 4:
@@ -142,9 +181,6 @@ int main()
 		// fclose(file_ptr);
 	} while (input != 0);
 	// return 0;
-
-	fclose(inputFile);
-	fclose(outputFile);
 
 	return 0;
 }

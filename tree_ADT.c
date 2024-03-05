@@ -11,6 +11,8 @@ TreeNode *createTreeNode(variable *data)
         node->firstChild = NULL;
         node->nextSibling = NULL;
         node->parent = NULL;
+        node->line_no = -1;
+        strcpy(node->lex, "");
     }
     return node;
 }
@@ -34,40 +36,11 @@ void addChild(TreeNode *PAR, TreeNode *CHILD)
     }
 }
 
-// void printTree(TreeNode *root, int depth)
-// {
-//     if (root == NULL)
-//         return;
-//     for (int i = 0; i < depth; ++i)
-//         printf("  ");
-//     printf("%s (VarNum: %d, IsTerminal: %s)\n", root->data->name, root->data->varNum, root->data->isTerminal ? "true" : "false");
-//     printTree(root->firstChild, depth + 1);
-//     printTree(root->nextSibling, depth);
-// }
 void printSpaces(int n)
 {
     for (int i = 0; i < n; i++)
     {
         printf("--");
-    }
-}
-void printTree(TreeNode *root, int depth)
-{
-    if (root == NULL)
-        return;
-
-    // Print the current node
-    printSpaces(depth * 2);
-    if (depth > 0)
-        printf("     ");
-    printf("%s\n", root->data->name);
-
-    // Recursively print the children
-    TreeNode *child = root->firstChild;
-    while (child != NULL)
-    {
-        printTree(child, depth + 1);
-        child = child->nextSibling;
     }
 }
 // void printTree(TreeNode *root, int depth)
@@ -76,15 +49,10 @@ void printTree(TreeNode *root, int depth)
 //         return;
 
 //     // Print the current node
-//     printSpaces(depth * 4);
-//     if (root->data->isTerminal)
-//     {
-//         printf("%s", root->data->name);
-//     }
-//     else
-//     {
-//         printf("%s\n", root->data->name);
-//     }
+//     printSpaces(depth * 2);
+//     if (depth > 0)
+//         printf("     ");
+//     printf("%s\n", root->data->name);
 
 //     // Recursively print the children
 //     TreeNode *child = root->firstChild;
@@ -93,6 +61,107 @@ void printTree(TreeNode *root, int depth)
 //         printTree(child, depth + 1);
 //         child = child->nextSibling;
 //     }
+// }
+
+void printTn(TreeNode *par)
+{
+    if (!par)
+        return;
+    bool isleafnode = (par->firstChild == NULL);
+    char lexeme_print[30];
+    char token_name[30];
+
+    if (isleafnode)
+    {
+        if (par->lex)
+            strcpy(lexeme_print, par->lex);
+        else
+            strcpy(lexeme_print, "----");
+        strcpy(token_name, par->data->name);
+    }
+    else
+    {
+        strcpy(lexeme_print, "----");
+        strcpy(token_name, "----");
+    }
+    printf("%-22s %-22d %-22s %-22s %-27s %-22s %-22s\n",
+           lexeme_print,
+           par->line_no,
+           token_name,
+           ("xyz"),
+           (par->parent ? par->parent->data->name : "----"),
+           ((par->firstChild == NULL ? "yes" : "no")),
+           (par->data->name));
+}
+void printTreeInorder(TreeNode *node, TreeNode *par, int depth)
+{
+
+    if (!node)
+    {
+        printTn(par);
+        return;
+    }
+
+    printTreeInorder(node->firstChild, node, depth + 1);
+
+    if (node->nextSibling == NULL)
+    {
+        if (par->firstChild == node)
+        {
+            printTn(par);
+        }
+        return;
+    }
+    else if (node->nextSibling->nextSibling == NULL)
+    {
+        printTn(par);
+
+        printTreeInorder(node->nextSibling, par, depth);
+    }
+    else
+    {
+        printTreeInorder(node->nextSibling, par, depth);
+    }
+}
+
+void printTree(TreeNode *node)
+{
+    printf("%-22s %-22s %-22s %-22s %-27s %-22s %-22s\n", "lexeme", "lineno", "tokenName", "valueIfNumber", "parentNodeSymbol", "isLeafNode(yes/no)", "nodeSymbol");
+    printTreeInorder(node, NULL, 0);
+}
+
+// void printTreeInorder(TreeNode *node, int depth)
+// {
+//     if (node == NULL)
+//         return;
+
+//     printTreeInorder(node->firstChild, depth + 1);
+//     bool isleafnode = (node->firstChild == NULL);
+//     char lexeme_print[30];
+//     char token_name[30];
+
+//     if (isleafnode)
+//     {
+//         if (node->lex)
+//             strcpy(lexeme_print, node->lex);
+//         else
+//             strcpy(lexeme_print, "----");
+//         strcpy(token_name, node->data->name);
+//     }
+//     else
+//     {
+//         strcpy(lexeme_print, "----");
+//         strcpy(token_name, "----");
+//     }
+
+//     printf("%-30s %-20d %-30s %-30s %-30s %-10d\n", lexeme_print, node->line_no,
+//            token_name,
+//            ("xyz"),
+//            (node->parent ? node->parent->data->name : "----"),
+//            ((node->firstChild == NULL ? "yes" : "no")),
+//            (node->data->name));
+
+//     printTreeInorder(node->nextSibling, depth);
 // }
 
 void freeTreeNode(TreeNode *node)

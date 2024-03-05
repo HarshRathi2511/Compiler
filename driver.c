@@ -122,7 +122,7 @@ int main()
 					parser(new_token);
 				}
 			}
-			printTree(root, 0);
+			// printTree(root, 0);
 		}
 
 		case 4:

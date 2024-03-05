@@ -11,11 +11,13 @@ typedef struct TreeNode
     struct TreeNode *firstChild;
     struct TreeNode *nextSibling;
     struct TreeNode *parent;
+    int line_no;
+    char lex[30];
 } TreeNode;
 
 TreeNode *createTreeNode(variable *data);
+void printTree(TreeNode *node);
 void addChild(TreeNode *parent, TreeNode *child);
-void printTree(TreeNode *root, int depth);
 void freeTreeNode(TreeNode *node);
 variable *createvariable(const char *name, int varNum, bool isTerminal);
 

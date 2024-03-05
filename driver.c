@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
 	populateFollow();
 	initializeErrorTokens();
 	fillMatrix();
+	// printTerminals();
 
 	int input;
 	printf("THE FOLLOWING IMPLEMENTATIONS HAVE BEEN COMPLETED\n");

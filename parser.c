@@ -20,6 +20,7 @@ variable *SYN_var;
 TreeNode *root;
 TreeNode *curr_child;
 Stack *st;
+int arr[16] = {1, 3, 14, 16, 20, 11, 26, 29, 33, 35, 36, 34, 37, 38, 54, 55};
 
 void initializeStackandTree()
 {
@@ -177,6 +178,12 @@ void fillMatrix()
         }
     }
 
+    unsigned long long mask2 = 0;
+    for (int i = 0; i < 16; i++)
+    {
+        mask2 = mask2 | (1ULL << arr[i]);
+    }
+
     for (int i = 0; i < NON_TERMINALS; i++)
     {
         rule *curr = grammar[i];
@@ -211,6 +218,7 @@ void fillMatrix()
             curr = curr->nextRule;
         }
         updateMatrix(SYN, follow[i], i);
+        updateMatrix(SYN, mask2, i);
     }
 }
 
@@ -842,6 +850,7 @@ int assignNumToTokens(token_input *head)
     }
     return num;
 }
+
 TreeNode *returnNextNode(TreeNode *curr_child)
 {
     if (curr_child->parent == NULL)
@@ -867,6 +876,7 @@ TreeNode *returnNextNode(TreeNode *curr_child)
 }
 
 void parser(token_input *token)
+
 {
     int i = 1;
     if (token != NULL)
@@ -891,7 +901,7 @@ void parser(token_input *token)
         // If stacks top has dollar
         if (st->top->data->isTerminal && st->top->data->varNum == 0)
         {
-            printf(CYAN "Error in parsing, no more non-terminals in stack\n");
+            printf(CYAN "Error in parsing, no more non-terminals in stack. end encountered earlier. No More statements should come after end.\n");
         }
         variable *curr_var = st->top->data;
         bool curr_isTerminal = curr_var->isTerminal;
@@ -1010,7 +1020,7 @@ void parser(token_input *token)
 //     populateTerminals("terminals.txt");
 //     populateNonTerminals("non_terminals.txt");
 //     // test();
-//     // printTerminals();
+
 //     // printNonTerminals();
 //     fill_epsilon();
 //     readGrammar("grammar.txt");

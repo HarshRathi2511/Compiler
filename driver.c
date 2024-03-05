@@ -106,7 +106,11 @@ int main()
 				{
 					break;
 				}
-				// printToken(token);
+				if (token->token_type == TK_ERROR)
+				{
+					printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
+				}
+
 				if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
 				{
 					token_input *new_token = (token_input *)malloc(sizeof(token_input));

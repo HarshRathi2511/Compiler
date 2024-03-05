@@ -128,10 +128,6 @@ void AddtoHashTable()
 	insert("type", TK_TYPE);
 	insert("_main", TK_MAIN);
 	insert("global", TK_GLOBAL);
-	insert("parameter", TK_PARAMETER);
-	insert("list", TK_LIST);
-	insert("input", TK_INPUT);
-	insert("output", TK_OUTPUT);
 	insert("int", TK_INT);
 	insert("real", TK_REAL);
 	insert("if", TK_IF);
@@ -142,6 +138,10 @@ void AddtoHashTable()
 	insert("write", TK_WRITE);
 	insert("return", TK_RETURN);
 	insert("call", TK_CALL);
+	insert("parameter", TK_PARAMETER);
+	insert("list", TK_LIST);
+	insert("input", TK_INPUT);
+	insert("output", TK_OUTPUT);
 }
 
 // endhash
@@ -151,15 +151,24 @@ void initTwinBuffer(TwinBuffer *tb)
 	tb->buf = malloc(sizeof(char) * (BUF_SIZE * 2));
 	memset(tb->buf, 0, BUF_SIZE * 2);
 	tb->fwd = 0;
-	tb->lastBufLoad = 0;
+	tb->isLastBufferLoaded = 0;
 }
 
-void bufferLoader(TwinBuffer *tb, bool loadFirst)
+int getBuffEnd(TwinBuffer *tb)
+{
+	return 2*BUF_SIZE;
+}
+
+int getCurrBuffPos(TwinBuffer *tb)
+{
+	return tb->fwd % (2 * getBuffEnd(tb));
+}
+
+void loadInitialBuffer(TwinBuffer *tb, bool loadFirst)
 {
 	char *bufferPosition = loadFirst ? tb->buf : tb->buf + BUF_SIZE;
 	size_t bytesRead = fread(bufferPosition, sizeof(char), BUF_SIZE, tb->fp);
 
-	// If fewer characters were read than the buffer size, mark the end of the buffer with EOF
 	if (bytesRead < BUF_SIZE)
 	{
 		bufferPosition[bytesRead] = EOF;
@@ -168,24 +177,17 @@ void bufferLoader(TwinBuffer *tb, bool loadFirst)
 
 void checkAndLoadBuffer(TwinBuffer *tb)
 {
-	// Check if the current position is at the end of the first buffer and the last buffer hasn't been loaded yet
-	if ((tb->fwd % (2 * BUF_SIZE)) == (BUF_SIZE - 1) && !tb->lastBufLoad)
-	{
-		bufferLoader(tb, false);
-		tb->lastBufLoad = 1;
-	}
-	// Check if the current position is at the end of the second buffer and the last buffer has been loaded
-	else if ((tb->fwd % (2 * BUF_SIZE)) == (2 * BUF_SIZE - 1) && tb->lastBufLoad)
-	{
-		bufferLoader(tb, true);
-		tb->lastBufLoad = 0;
-	}
+	int currentPos = getCurrBuffPos(tb);
+
+	(currentPos == (getBuffEnd(tb)/2 - 1) && !tb->isLastBufferLoaded) ? loadBuffer(tb, false) : (currentPos == (getBuffEnd(tb) - 1) && tb->isLastBufferLoaded) ? loadBuffer(tb, true)
+																																	   : 0;
+	tb->isLastBufferLoaded = !tb->isLastBufferLoaded;
 }
 
 void printBufferContents(TwinBuffer *tb)
 {
 	int i;
-	for (i = 0; i < 2 * BUF_SIZE; i++)
+	for (i = 0; i < getBuffEnd(tb); i++)
 	{
 		if (tb->buf[i] != EOF)
 		{
@@ -202,16 +204,10 @@ int setupLexer(TwinBuffer *tb, FILE *fp)
 {
 	tb->fp = fp;
 	initTwinBuffer(tb);
-	bufferLoader(tb, true);
+	loadInitialBuffer(tb, true);
 	return 0;
 }
 
-// token struct
-// typedef union TOKEN_VAL // Value field of the Token is any of these
-// {
-// 	int number;
-// 	double realnumber;
-// } TOKEN_VAL;
 
 const char *token_type_to_string(TOKEN_TYPE token)
 {
@@ -1620,7 +1616,7 @@ int main()
 		{
 			break;
 		}
-		// printToken(token);
+		printToken(token);
 		if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
 		{
 			token_input *new_token = (token_input *)malloc(sizeof(token_input));

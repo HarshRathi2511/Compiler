@@ -10,6 +10,7 @@
     "unordered_map": "c",
     "vector": "c",
     "iosfwd": "c",
-    "typeinfo": "c"
+    "typeinfo": "c",
+    "lexerdef.h": "c"
   }
 }

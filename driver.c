@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
 				free(token);
 			}
 
-			printparsingtree();
+			printparsingtree(outputFile);
 			freeAllafterParsing();
 			fclose(inputFile);
 			fclose(outputFile);
@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
 				free(token);
 			}
 
-			printparsingtree();
+			printparsingtree(outputFile);
 			freeAllafterParsing();
 			fclose(inputFile);
 			fclose(outputFile);

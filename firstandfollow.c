@@ -83,9 +83,9 @@ void freeAllafterParsing()
     freeTreeNode(root);
     free(st);
 }
-void printparsingtree()
+void printparsingtree(FILE *file)
 {
-    printTree(root);
+    printTreeToFile(file, root);
 }
 void initializeErrorTokens()
 {

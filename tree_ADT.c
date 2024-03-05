@@ -63,7 +63,7 @@ void printSpaces(int n)
 //     }
 // }
 
-void printTn(TreeNode *par)
+void printTn(FILE *file, TreeNode *par)
 {
     if (!par)
         return;
@@ -105,52 +105,55 @@ void printTn(TreeNode *par)
             strcpy(valif, lexeme_print);
             strcpy(lexeme_print, "----");
         }
-        printf("%-22s %-22s %-22s %-22s %-27s %-22s %-22s\n",
-               lexeme_print,
-               line_num,
-               token_name,
-               valif,
-               (par->parent ? par->parent->data->name : "----"),
-               ((par->firstChild == NULL ? "yes" : "no")),
-               (par->data->name));
+        fprintf(file, "%-22s %-22s %-22s %-22s %-27s %-22s %-22s\n",
+                lexeme_print,
+                line_num,
+                token_name,
+                valif,
+                (par->parent ? par->parent->data->name : "----"),
+                ((par->firstChild == NULL ? "yes" : "no")),
+                (par->data->name));
     }
 }
-void printTreeInorder(TreeNode *node, TreeNode *par, int depth)
+void printTreeInorder(FILE *file, TreeNode *node, TreeNode *par, int depth)
 {
 
     if (!node)
     {
-        printTn(par);
+        printTn(file, par);
         return;
     }
 
-    printTreeInorder(node->firstChild, node, depth + 1);
+    printTreeInorder(file, node->firstChild, node, depth + 1);
 
     if (node->nextSibling == NULL)
     {
 
         if (par && par->firstChild == node)
         {
-            printTn(par);
+            printTn(file, par);
         }
         return;
     }
     else if (node->nextSibling->nextSibling == NULL)
     {
-        printTn(par);
+        printTn(file, par);
 
-        printTreeInorder(node->nextSibling, par, depth);
+        printTreeInorder(file, node->nextSibling, par, depth);
     }
     else
     {
-        printTreeInorder(node->nextSibling, par, depth);
+        printTreeInorder(file, node->nextSibling, par, depth);
     }
 }
 
-void printTree(TreeNode *node)
+void printTreeToFile(FILE *file, TreeNode *node)
 {
-    printf("%-22s %-22s %-22s %-22s %-27s %-22s %-22s\n", "lexeme", "lineno", "tokenName", "valueIfNumber", "parentNodeSymbol", "isLeafNode(yes/no)", "nodeSymbol");
-    printTreeInorder(node, NULL, 0);
+    fprintf(file, "============================================================ PARSE TREE ======================================================================\n");
+    fprintf(file, "%-22s %-22s %-22s %-22s %-27s %-22s %-22s\n", "lexeme", "lineno", "tokenName", "valueIfNumber", "parentNodeSymbol", "isLeafNode(yes/no)", "nodeSymbol");
+    fprintf(file, "----------------------------------------------------------------------------------------------------------------------------------------------\n");
+
+    printTreeInorder(file, node, NULL, 0);
 }
 
 // void printTreeInorder(TreeNode *node, int depth)

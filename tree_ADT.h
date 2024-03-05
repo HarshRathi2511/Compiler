@@ -16,7 +16,7 @@ typedef struct TreeNode
 } TreeNode;
 
 TreeNode *createTreeNode(variable *data);
-void printTree(TreeNode *node);
+void printTreeToFile(FILE *file, TreeNode *node);
 void addChild(TreeNode *parent, TreeNode *child);
 void freeTreeNode(TreeNode *node);
 variable *createvariable(const char *name, int varNum, bool isTerminal);

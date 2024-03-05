@@ -56,7 +56,7 @@ void initializeStackandTree();
 void freeAllafterMenu();
 void freeGrammar();
 void freeAllafterParsing();
-void printparsingtree();
+void printparsingtree(FILE *file);
 unsigned long long recFirst(int i);
 bool inFirst(variable *nonTerminal, variable *terminal);
 void populateFirst();

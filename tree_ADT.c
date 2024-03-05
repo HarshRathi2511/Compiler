@@ -84,14 +84,28 @@ void printTn(TreeNode *par)
         strcpy(lexeme_print, "----");
         strcpy(token_name, "----");
     }
-    printf("%-22s %-22d %-22s %-22s %-27s %-22s %-22s\n",
-           lexeme_print,
-           par->line_no,
-           token_name,
-           ("xyz"),
-           (par->parent ? par->parent->data->name : "----"),
-           ((par->firstChild == NULL ? "yes" : "no")),
-           (par->data->name));
+    if (!strcmp(token_name, "epsilon"))
+    {
+        // do nothing in this case
+    }
+    else
+    {
+        char valif[30];
+        strcpy(valif, "----");
+        if (!strcmp(token_name, "TK_NUM") || !strcmp(token_name, "TK_RNUM"))
+        {
+            strcpy(valif, lexeme_print);
+            strcpy(lexeme_print, "----");
+        }
+        printf("%-22s %-22d %-22s %-22s %-27s %-22s %-22s\n",
+               lexeme_print,
+               par->line_no,
+               token_name,
+               valif,
+               (par->parent ? par->parent->data->name : "----"),
+               ((par->firstChild == NULL ? "yes" : "no")),
+               (par->data->name));
+    }
 }
 void printTreeInorder(TreeNode *node, TreeNode *par, int depth)
 {
@@ -106,7 +120,8 @@ void printTreeInorder(TreeNode *node, TreeNode *par, int depth)
 
     if (node->nextSibling == NULL)
     {
-        if (par->firstChild == node)
+
+        if (par && par->firstChild == node)
         {
             printTn(par);
         }

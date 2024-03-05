@@ -1599,19 +1599,18 @@ TOKEN *getNextToken(TwinBuffer *tb)
 // 		fclose(inputFile);
 // 		return 1;
 // 	}
-
 // 	AddtoHashTable();
 // 	parser_input_head = (token_input *)malloc(sizeof(token_input));
 
-// 	populateTerminals("terminals.txt");
-// 	populateNonTerminals("non_terminals.txt");
-// 	fill_epsilon();
-// 	readGrammar("grammar.txt");
-// 	populateFirst();
-// 	epsilonFirst();
-// 	populateFollow();
-// 	initializeErrorTokens();
-// 	fillMatrix();
+// // 	populateTerminals("terminals.txt");
+// // 	populateNonTerminals("non_terminals.txt");
+// // 	fill_epsilon();
+// // 	readGrammar("grammar.txt");
+// // 	populateFirst();
+// // 	epsilonFirst();
+// // 	populateFollow();
+// // 	initializeErrorTokens();
+// // 	fillMatrix();
 
 // 	token_input *curr = parser_input_head;
 // 	st = initializeStack();
@@ -1655,7 +1654,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 
 // 	// invoke your lexer and parser here
 
-// 	printTree(root);
+// 	// printTree(root);
 
 // 	for (int i = 0; i < TERMINALS; i++)
 // 	{

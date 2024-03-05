@@ -820,6 +820,7 @@ void parser(token_input *token)
             // printf("MATCHED - %s %s \n", curr_var->name, token->name);
             if (!isEmpty(st))
                 pop(st);
+            //s
             curr_child->line_no = token->linenum;
             strcpy(curr_child->lex, token->value);
             // printf("check segfault for tree line 824 %s %s\n", curr_child->data->name, curr_child->parent->data->name);
@@ -877,6 +878,7 @@ void parser(token_input *token)
         // printf("Check for segfault post temp declaration \n");
         int j = 0;
         // printf("check segfault for tree 852\n");
+        //s
         curr_child->line_no = token->linenum;
         while (rule_to_push != NULL)
         {

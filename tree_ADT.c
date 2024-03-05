@@ -70,7 +70,15 @@ void printTn(TreeNode *par)
     bool isleafnode = (par->firstChild == NULL);
     char lexeme_print[30];
     char token_name[30];
-
+    char line_num[10];
+    if (isleafnode)
+    {
+        sprintf(line_num, "%d", par->line_no);
+    }
+    else
+    {
+        strcpy(line_num, "--");
+    }
     if (isleafnode)
     {
         if (par->lex)
@@ -97,9 +105,9 @@ void printTn(TreeNode *par)
             strcpy(valif, lexeme_print);
             strcpy(lexeme_print, "----");
         }
-        printf("%-22s %-22d %-22s %-22s %-27s %-22s %-22s\n",
+        printf("%-22s %-22s %-22s %-22s %-27s %-22s %-22s\n",
                lexeme_print,
-               par->line_no,
+               line_num,
                token_name,
                valif,
                (par->parent ? par->parent->data->name : "----"),

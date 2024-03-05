@@ -16,12 +16,26 @@ int main()
 {
 	TwinBuffer twinBuffer;
 
-	char *inputFileChar = "t1.txt";
+	char *inputFileChar = "Test Cases/t6.txt";
 	char *outputFileChar = "output.txt";
 
 	AddtoHashTable();
+	populateTerminals("terminals.txt");
+	populateNonTerminals("non_terminals.txt");
+	fill_epsilon();
+	readGrammar("grammar.txt");
+	populateFirst();
+	epsilonFirst();
+	populateFollow();
+	initializeErrorTokens();
+	fillMatrix();
 
 	int input;
+	printf("THE FOLLOWING IMPLEMENTATIONS HAVE BEEN COMPLETED\n");
+	printf("1) FIRST and FOLLOW set automated\n");
+	printf("2) Both lexical and syntax analysis modules implemented\n");
+	printf("3) The parse tree has been constructed\n");
+	printf("4) All modules work with all the given 1-6 testcases\n");
 	do
 	{
 
@@ -45,6 +59,7 @@ int main()
 		{
 		case 0:
 		{
+			freeAllafterMenu();
 			printf("\nSuccessfully EXITED\n");
 			break;
 		}
@@ -116,24 +131,8 @@ int main()
 				fclose(outputFile);
 				return 1;
 			}
-			populateTerminals("terminals.txt");
-			populateNonTerminals("non_terminals.txt");
-			fill_epsilon();
-			readGrammar("grammar.txt");
-			populateFirst();
-			epsilonFirst();
-			populateFollow();
-			initializeErrorTokens();
-			fillMatrix();
-			parser_input_head = (token_input *)malloc(sizeof(token_input));
-			token_input *curr = parser_input_head;
-			st = initializeStack();
-			root = createTreeNode(non_terminal_array[0]);
-			TreeNode *dollarnode = createTreeNode(terminal_array[0]);
-			root->nextSibling = dollarnode;
-			push(st, terminal_array[0]);
-			push(st, non_terminal_array[0]);
-			curr_child = root;
+			initializeStackandTree();
+
 			while (true)
 			{
 				TOKEN *token = getNextToken(&twinBuffer);
@@ -145,7 +144,7 @@ int main()
 				{
 					printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
 				}
-
+				// printToken(token);
 				if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
 				{
 					token_input *new_token = (token_input *)malloc(sizeof(token_input));
@@ -155,13 +154,16 @@ int main()
 					new_token->varNum = assignNumToTokens(new_token);
 					// curr = new_token;
 					parser(new_token);
+					free(new_token);
 				}
+				free(token);
 			}
-			//! call print here
-			// printTree(root, 0);
 
+			printparsingtree();
+			freeAllafterParsing();
 			fclose(inputFile);
 			fclose(outputFile);
+			break;
 		}
 
 		case 4:

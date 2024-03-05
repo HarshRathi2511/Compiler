@@ -51,29 +51,13 @@ typedef struct rule
     varNode *headNode;
 } rule;
 
-// Global variables
-rule *matrix[NON_TERMINALS][TERMINALS];
-variable *terminal_array[TERMINALS];
-variable *non_terminal_array[NON_TERMINALS];
-varNode First[NON_TERMINALS]; // Declare an array of varNode
-rule *grammar[NON_TERMINALS];
-bool epsilon[NON_TERMINALS];
-unsigned long long first[NON_TERMINALS];
-unsigned long long follow[NON_TERMINALS];
-token_input *parser_input_head;
-followADT *headChain[NON_TERMINALS];
-followADT *prevChain[NON_TERMINALS];
-rule *ERROR;
-rule *SYN;
-variable *ERROR_var;
-variable *SYN_var;
-TreeNode *root;
-TreeNode *curr_child;
-Stack *st;
-
 // Function prototypes
-unsigned long long
-recFirst(int i);
+void initializeStackandTree();
+void freeAllafterMenu();
+void freeGrammar();
+void freeAllafterParsing();
+void printparsingtree();
+unsigned long long recFirst(int i);
 bool inFirst(variable *nonTerminal, variable *terminal);
 void populateFirst();
 unsigned long long recFollow(int i);

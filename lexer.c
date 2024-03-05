@@ -1583,89 +1583,82 @@ TOKEN *getNextToken(TwinBuffer *tb)
 	return NULL;
 }
 
-int main()
-{
-	TwinBuffer twinBuffer;
-	FILE *inputFile = fopen("Test Cases/t5.txt", "r");
-	if (inputFile == NULL)
-	{
-		fprintf(stderr, "Error opening input file.\n");
-		return 1;
-	}
+// int main()
+// {
+// 	TwinBuffer twinBuffer;
+// 	FILE *inputFile = fopen("Test Cases/t5.txt", "r");
+// 	if (inputFile == NULL)
+// 	{
+// 		fprintf(stderr, "Error opening input file.\n");
+// 		return 1;
+// 	}
 
-	if (setupLexer(&twinBuffer, inputFile) != 0)
-	{
-		fprintf(stderr, "Error setting up lexer.\n");
-		fclose(inputFile);
-		return 1;
-	}
-	AddtoHashTable();
-	parser_input_head = (token_input *)malloc(sizeof(token_input));
+// 	if (setupLexer(&twinBuffer, inputFile) != 0)
+// 	{
+// 		fprintf(stderr, "Error setting up lexer.\n");
+// 		fclose(inputFile);
+// 		return 1;
+// 	}
+// 	AddtoHashTable();
+// 	parser_input_head = (token_input *)malloc(sizeof(token_input));
 
-	populateTerminals("terminals.txt");
-	populateNonTerminals("non_terminals.txt");
-	fill_epsilon();
-	readGrammar("grammar.txt");
-	populateFirst();
-	epsilonFirst();
-	populateFollow();
-	initializeErrorTokens();
-	fillMatrix();
+// 	populateTerminals("terminals.txt");
+// 	populateNonTerminals("non_terminals.txt");
+// 	fill_epsilon();
+// 	readGrammar("grammar.txt");
+// 	populateFirst();
+// 	epsilonFirst();
+// 	populateFollow();
+// 	initializeErrorTokens();
+// 	fillMatrix();
 
-	token_input *curr = parser_input_head;
-	st = initializeStack();
-	root = createTreeNode(non_terminal_array[0]);
-	TreeNode *dollarnode = createTreeNode(terminal_array[0]);
-	root->nextSibling = dollarnode;
-	push(st, terminal_array[0]);
-	push(st, non_terminal_array[0]);
-	curr_child = root;
-	while (true)
-	{
-		TOKEN *token = getNextToken(&twinBuffer);
-		if (token->isEOF)
-		{
-			break;
-		}
-		if (token->token_type == TK_ERROR)
-		{
-			printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
-		}
-		printToken(token);
-		if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
-		{
-			token_input *new_token = (token_input *)malloc(sizeof(token_input));
-			new_token->linenum = token->line_number;
-			strcpy(new_token->name, token_type_to_string(token->token_type));
-			strcpy(new_token->value, token->lexeme);
-			new_token->varNum = assignNumToTokens(new_token);
-			// curr = new_token;
-			parser(new_token);
-		}
-	}
-	// int i = 1;
+	
+// 	while (true)
+// 	{
+// 		TOKEN *token = getNextToken(&twinBuffer);
+// 		if (token->isEOF)
+// 		{
+// 			break;
+// 		}
+// 		if (token->token_type == TK_ERROR)
+// 		{
+// 			printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
+// 		}
+// 		printToken(token);
+// 		if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
+// 		{
+// 			token_input *new_token = (token_input *)malloc(sizeof(token_input));
+// 			new_token->linenum = token->line_number;
+// 			strcpy(new_token->name, token_type_to_string(token->token_type));
+// 			strcpy(new_token->value, token->lexeme);
+// 			new_token->varNum = assignNumToTokens(new_token);
+// 			// curr = new_token;
+// 			parser(new_token);
+// 		}
+// 	}
+// 	// int i = 1;
 
-	// while (curr != NULL)
-	// {
-	// 	printf("%d. %s\n", i, curr->name);
-	// 	i++;
-	// 	curr = curr->next_token;
-	// }
+// 	// while (curr != NULL)
+// 	// {
+// 	// 	printf("%d. %s\n", i, curr->name);
+// 	// 	i++;
+// 	// 	curr = curr->next_token;
+// 	// }
 
-	// invoke your lexer and parser here
+// 	// invoke your lexer and parser here
 
-	printTree(root);
+// 	printTree(root);
 
-	for (int i = 0; i < TERMINALS; i++)
-	{
-		free(terminal_array[i]);
-	}
-	for (int i = 0; i < NON_TERMINALS; i++)
-	{
-		free(non_terminal_array[i]);
-	}
+// 	for (int i = 0; i < TERMINALS; i++)
+// 	{
+// 		free(terminal_array[i]);
+// 	}
+// 	for (int i = 0; i < NON_TERMINALS; i++)
+// 	{
+// 		free(non_terminal_array[i]);
+// 	}
 
-	fclose(inputFile);
+// 	fclose(inputFile);
 
-	return 0;
-}
+// 	return 0;
+// }

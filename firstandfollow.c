@@ -1,5 +1,92 @@
 #include "firstandfollow.h"
 
+// Global variables
+rule *matrix[NON_TERMINALS][TERMINALS];
+variable *terminal_array[TERMINALS];
+variable *non_terminal_array[NON_TERMINALS];
+varNode First[NON_TERMINALS]; // Declare an array of varNode
+rule *grammar[NON_TERMINALS];
+bool epsilon[NON_TERMINALS];
+unsigned long long first[NON_TERMINALS];
+unsigned long long follow[NON_TERMINALS];
+token_input *parser_input_head;
+followADT *headChain[NON_TERMINALS];
+followADT *prevChain[NON_TERMINALS];
+rule *ERROR;
+rule *SYN;
+variable *ERROR_var;
+variable *SYN_var;
+TreeNode *root;
+TreeNode *curr_child;
+Stack *st;
+
+void initializeStackandTree()
+{
+    st = initializeStack();
+    root = createTreeNode(non_terminal_array[0]);
+    TreeNode *dollarnode = createTreeNode(terminal_array[0]);
+    root->nextSibling = dollarnode;
+    push(st, terminal_array[0]);
+    push(st, non_terminal_array[0]);
+    curr_child = root;
+}
+void freeAllafterMenu()
+{
+    for (int i = 0; i < TERMINALS; i++)
+    {
+        free(terminal_array[i]);
+    }
+    for (int i = 0; i < NON_TERMINALS; i++)
+    {
+        free(non_terminal_array[i]);
+        followADT *p = headChain[i];
+        followADT *q;
+
+        while (p)
+        {
+            q = p;
+            p = p->next;
+            free(p);
+        }
+    }
+    free(ERROR_var);
+    free(SYN_var);
+    free(SYN);
+    free(ERROR);
+    freeGrammar();
+    free(matrix);
+}
+void freeGrammar()
+{
+    for (int i = 0; i < NON_TERMINALS; i++)
+    {
+        rule *currentRule = grammar[i];
+        while (currentRule != NULL)
+        {
+            varNode *currentNode = currentRule->headNode;
+            while (currentNode != NULL)
+            {
+                varNode *temp = currentNode;
+                currentNode = currentNode->next;
+                // free(temp->v); // Assuming 'v' (variable) is dynamically allocated separately
+                free(temp);
+            }
+            rule *tempRule = currentRule;
+            currentRule = currentRule->nextRule;
+            free(tempRule);
+        }
+    }
+}
+
+void freeAllafterParsing()
+{
+    freeTreeNode(root);
+    free(st);
+}
+void printparsingtree()
+{
+    printTree(root);
+}
 void initializeErrorTokens()
 {
     ERROR_var = (variable *)malloc(sizeof(variable));
@@ -820,7 +907,7 @@ void parser(token_input *token)
             // printf("MATCHED - %s %s \n", curr_var->name, token->name);
             if (!isEmpty(st))
                 pop(st);
-            //s
+            // s
             curr_child->line_no = token->linenum;
             strcpy(curr_child->lex, token->value);
             // printf("check segfault for tree line 824 %s %s\n", curr_child->data->name, curr_child->parent->data->name);
@@ -878,7 +965,7 @@ void parser(token_input *token)
         // printf("Check for segfault post temp declaration \n");
         int j = 0;
         // printf("check segfault for tree 852\n");
-        //s
+        // s
         curr_child->line_no = token->linenum;
         while (rule_to_push != NULL)
         {

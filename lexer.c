@@ -1571,7 +1571,7 @@ TOKEN *getNextToken(TwinBuffer *tb)
 int main()
 {
 	TwinBuffer twinBuffer;
-	FILE *inputFile = fopen("Test Cases/t6.txt", "r");
+	FILE *inputFile = fopen("Test Cases/t5.txt", "r");
 	if (inputFile == NULL)
 	{
 		fprintf(stderr, "Error opening input file.\n");
@@ -1584,7 +1584,6 @@ int main()
 		fclose(inputFile);
 		return 1;
 	}
-
 	AddtoHashTable();
 	parser_input_head = (token_input *)malloc(sizeof(token_input));
 
@@ -1617,7 +1616,7 @@ int main()
 		{
 			printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
 		}
-		printToken(token);
+		// printToken(token);
 		if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
 		{
 			token_input *new_token = (token_input *)malloc(sizeof(token_input));

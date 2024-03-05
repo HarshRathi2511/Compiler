@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 			//! add the global variables here
 			// line_number = 1;
 			// state = 1;
-			resetStateAndLineNumber(); 
+			resetStateAndLineNumber();
 
 			break;
 		}
@@ -191,13 +191,12 @@ int main(int argc, char *argv[])
 				free(token);
 			}
 
-
 			printparsingtree();
 			freeAllafterParsing();
 			fclose(inputFile);
 			fclose(outputFile);
 
-			//reset
+			// reset
 			resetStateAndLineNumber();
 			break;
 		}
@@ -207,10 +206,66 @@ int main(int argc, char *argv[])
 			clock_t start, end;
 			double cpu_time_used;
 			start = clock();
+			FILE *inputFile = fopen(inputFileChar, "r");
+			FILE *outputFile = fopen(outputFileChar, "w"); // Open file for writing tokens
+			if (inputFile == NULL || outputFile == NULL)
+			{
+				fprintf(stderr, "Error opening input or output file.\n");
+				return 1;
+			}
+			// Remove_Comments(inputFile, outputFile);
+			//         printf("ALL THE COMMENTS IN THE TESTCASE FILE ARE SUCESSFULLY REMOVED.\n");
+
+			if (setupLexer(&twinBuffer, inputFile) != 0)
+			{
+				fprintf(stderr, "Error setting up lexer.\n");
+				fclose(inputFile);
+				fclose(outputFile);
+				return 1;
+			}
+			initializeStackandTree();
+
+			while (true)
+			{
+				TOKEN *token = getNextToken(&twinBuffer);
+				if (token->isEOF)
+				{
+					break;
+				}
+				if (token->token_type == TK_ERROR)
+				{
+					printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
+				}
+				// printToken(token);
+				if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
+				{
+					token_input *new_token = (token_input *)malloc(sizeof(token_input));
+					new_token->linenum = token->line_number;
+					strcpy(new_token->name, token_type_to_string(token->token_type));
+					strcpy(new_token->value, token->lexeme);
+					new_token->varNum = assignNumToTokens(new_token);
+					// curr = new_token;
+					parser(new_token);
+					free(new_token);
+				}
+				free(token);
+			}
+
+			printparsingtree();
+			freeAllafterParsing();
+			fclose(inputFile);
+			fclose(outputFile);
+
+			// reset
+			resetStateAndLineNumber();
 			// Your code here
 			end = clock();
 			cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+			unsigned long long int total_clock_cycles;
+			total_clock_cycles = end - start; // Calculate the total clock cycles
+
 			printf("Total time taken by CPU: %f\n", cpu_time_used);
+			printf("Total CPU clock cycles: %llu\n", total_clock_cycles);
 			break;
 		}
 		default:

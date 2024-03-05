@@ -90,7 +90,7 @@ typedef struct
 	char *buf;
 	int init;
 	int fwd;
-	int lastBufLoad;
+	int isLastBuffer;
 	FILE *fp;
 } TwinBuffer;
 

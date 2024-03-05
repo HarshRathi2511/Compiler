@@ -14,7 +14,7 @@ Entry* search(char* key);
 void AddtoHashTable();
 
 void initTwinBuffer(TwinBuffer *tb);
-void bufferLoader(TwinBuffer *tb, bool loadFirst);
+void bufferLoader(TwinBuffer *tb, bool flag);
 void checkAndLoadBuffer(TwinBuffer *tb);
 void printBufferContents(TwinBuffer *tb);
 int setupLexer(TwinBuffer *tb, FILE *fp);

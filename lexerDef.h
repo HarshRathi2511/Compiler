@@ -16,6 +16,7 @@
 #define BUF_SIZE 512
 #define MAX_LEXEME_SIZE 512
 
+
 //#define KEYWORDSIZE 26 // Size of Keywords Set
 typedef enum TOKEN_TYPE {
 	TK_EQ, 

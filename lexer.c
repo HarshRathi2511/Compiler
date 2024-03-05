@@ -479,6 +479,11 @@ void printToken(const TOKEN *token)
 
 static int state = 1; // 1 is the init state
 static int line_number = 1;
+
+void resetStateAndLineNumber(){
+	state = 1;
+	line_number = 1; 
+}
 TOKEN *getNextToken(TwinBuffer *tb)
 {
 

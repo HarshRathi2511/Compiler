@@ -1,6 +1,6 @@
 #include "colorCodes.h"
 #include "lexerDef.h"
-#include "firstandfollow.h"
+#include "parser.h"
 // REMOVING COMMENTS
 char *Find_Comment_Symbol(char comment, const char *readBuffer)
 {
@@ -151,12 +151,13 @@ int getCurrBuffPtr(TwinBuffer *tb)
 	return tb->fwd % (2 * BUF_SIZE);
 }
 
-int getMaxBufSize(){
+int getMaxBufSize()
+{
 	return 512;
 }
 
 void initTwinBuffer(TwinBuffer *tb)
-{   
+{
 	int buff_size = getMaxBufSize();
 	tb->buf = malloc(sizeof(char) * (buff_size * 2));
 	memset(tb->buf, 0, buff_size * 2);
@@ -165,7 +166,7 @@ void initTwinBuffer(TwinBuffer *tb)
 }
 
 void bufferLoader(TwinBuffer *tb, bool flag)
-{   
+{
 	int buff_size = getMaxBufSize();
 	char *bufferPosition = flag ? tb->buf : tb->buf + buff_size;
 	size_t bytesRead = fread(bufferPosition, sizeof(char), buff_size, tb->fp);
@@ -297,8 +298,8 @@ TOKEN_TYPE string_to_token_type(const char *str)
 }
 
 void checkAndLoadBuffer(TwinBuffer *tb)
-{   
-	int buff_size = getMaxBufSize(); 
+{
+	int buff_size = getMaxBufSize();
 	// Check if the current position is at the end of the first buffer and the last buffer hasn't been loaded yet
 	if (getCurrBuffPtr(tb) == (buff_size - 1) && !tb->isLastBuffer)
 	{
@@ -438,11 +439,10 @@ const char *token_type_to_string(TOKEN_TYPE token)
 	}
 }
 
-
 void printBufferContents(TwinBuffer *tb)
 {
 	int i;
-		int buff_size = getMaxBufSize(); 
+	int buff_size = getMaxBufSize();
 	for (i = 0; i < 2 * buff_size; i++)
 	{
 		if (tb->buf[i] != EOF)
@@ -480,9 +480,10 @@ void printToken(const TOKEN *token)
 static int state = 1; // 1 is the init state
 static int line_number = 1;
 
-void resetStateAndLineNumber(){
+void resetStateAndLineNumber()
+{
 	state = 1;
-	line_number = 1; 
+	line_number = 1;
 }
 TOKEN *getNextToken(TwinBuffer *tb)
 {
@@ -1617,7 +1618,6 @@ TOKEN *getNextToken(TwinBuffer *tb)
 // 	initializeErrorTokens();
 // 	fillMatrix();
 
-	
 // 	while (true)
 // 	{
 // 		TOKEN *token = getNextToken(&twinBuffer);

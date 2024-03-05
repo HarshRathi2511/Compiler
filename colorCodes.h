@@ -7,10 +7,6 @@
 #define BLUE 		"\033[0;34m"
 #define PURPLE 		"\033[0;35m"
 #define CYAN 		"\033[0;36m"
-#define INVERT		"\033[0;7m"
-#define RESET  		"\e[0m" 
-#define BOLD		"\e[1m"
-#define ITALICS		"\e[3m"
-#define UNDERLINE	"\e[4m"
+
 //
 #endif

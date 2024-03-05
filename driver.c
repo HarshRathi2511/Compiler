@@ -12,7 +12,7 @@
 // #include "lexer.c"
 #include "lexerDef.h"
 #include "colorCodes.h"
-#include "firstandfollow.h"
+#include "parser.h"
 #include "stack_ADT.h"
 #include "tree_ADT.h"
 #include "lexer.h"
@@ -74,12 +74,6 @@ int main(int argc, char *argv[])
 	printf("4) All modules work with all the given 1-6 testcases\n");
 	do
 	{
-
-		clock_t start_time, end_time;
-
-		double total_CPU_time, total_CPU_time_in_seconds;
-
-		start_time = clock();
 
 		printf("\n\n###### CHOOSE AN OPTION ###### \n\n");
 		printf("0: EXIT\n");

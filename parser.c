@@ -1,4 +1,4 @@
-#include "firstandfollow.h"
+#include "parser.h"
 #include "colorCodes.h"
 
 // Global variables
@@ -875,7 +875,7 @@ void parser(token_input *token)
         // printf("%d \t", i);
         if (isEmpty(st))
         {
-            printf(RED "Line %d Error: Invalid token %s encountered with value %s stack top EMPTY - ERROR\n", token->linenum, token->name, token->value);
+            printf(CYAN "Line %d Error: Invalid token %s encountered with value %s stack top EMPTY - ERROR\n", token->linenum, token->name, token->value);
             return;
         }
         if (!isEmpty(st) && st->top->data->isTerminal && st->top->data->varNum == 57)
@@ -891,7 +891,7 @@ void parser(token_input *token)
         // If stacks top has dollar
         if (st->top->data->isTerminal && st->top->data->varNum == 0)
         {
-            printf(RED "Error in parsing, no more non-terminals in stack\n");
+            printf(CYAN "Error in parsing, no more non-terminals in stack\n");
         }
         variable *curr_var = st->top->data;
         bool curr_isTerminal = curr_var->isTerminal;
@@ -924,7 +924,7 @@ void parser(token_input *token)
             if (is_SYN)
             {
                 pop(st);
-                printf(RED "Line %d Error: Invalid token %s encountered with value %s stack top %s SYN\n", token->linenum, token->name, token->value, curr_var->name);
+                printf(CYAN "Line %d Error: Invalid token %s encountered with value %s stack top %s SYN\n", token->linenum, token->name, token->value, curr_var->name);
                 curr_child = returnNextNode(curr_child);
                 parser(token);
             }
@@ -947,7 +947,7 @@ void parser(token_input *token)
             }
             if (curr_isTerminal)
             {
-                printf(RED "Line %d Error: The token %s for lexeme %s  does not match with the expected token %s\n", token->linenum, token->name, token->value, curr_var->name);
+                printf(CYAN "Line %d Error: The token %s for lexeme %s  does not match with the expected token %s\n", token->linenum, token->name, token->value, curr_var->name);
                 pop(st);
                 curr_child = returnNextNode(curr_child);
                 parser(token);

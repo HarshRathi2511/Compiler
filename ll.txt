@@ -1,8 +1,0 @@
-first make a matrix of nonterminals vs terminals of rule type
-write rule using first. for writing the exact rule we can check the first of all the rules
-
-
-epsilon 
-A -> epsilon
-follow(A)
-then fill that rule A->epsilon in all the terminals that are generated from the follow of it

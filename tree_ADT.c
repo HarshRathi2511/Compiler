@@ -115,6 +115,37 @@ void printTn(FILE *file, TreeNode *par)
                 (par->data->name));
     }
 }
+// void printTreeInorder(FILE *file, TreeNode *node, TreeNode *par, int depth)
+// {
+
+//     if (!node)
+//     {
+//         printTn(file, par);
+//         return;
+//     }
+
+//     printTreeInorder(file, node->firstChild, node, depth + 1);
+
+//     if (node->nextSibling == NULL)
+//     {
+
+//         if (par && par->firstChild == node)
+//         {
+//             printTn(file, par);
+//         }
+//         return;
+//     }
+//     else if (node->nextSibling->nextSibling == NULL)
+//     {
+//         printTn(file, par);
+
+//         printTreeInorder(file, node->nextSibling, par, depth);
+//     }
+//     else
+//     {
+//         printTreeInorder(file, node->nextSibling, par, depth);
+//     }
+// }
 void printTreeInorder(FILE *file, TreeNode *node, TreeNode *par, int depth)
 {
 
@@ -128,14 +159,12 @@ void printTreeInorder(FILE *file, TreeNode *node, TreeNode *par, int depth)
 
     if (node->nextSibling == NULL)
     {
-
         if (par && par->firstChild == node)
-        {
             printTn(file, par);
-        }
+
         return;
     }
-    else if (node->nextSibling->nextSibling == NULL)
+    else if (par && par->firstChild == node)
     {
         printTn(file, par);
 

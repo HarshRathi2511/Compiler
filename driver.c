@@ -68,11 +68,7 @@ int main(int argc, char *argv[])
 	// printTerminals();
 
 	int input;
-	printf("THE FOLLOWING IMPLEMENTATIONS HAVE BEEN COMPLETED\n");
-	printf("1) FIRST and FOLLOW set automated\n");
-	printf("2) Both lexical and syntax analysis modules implemented\n");
-	printf("3) The parse tree has been constructed\n");
-	printf("4) All modules work with all the given 1-6 testcases\n");
+
 	do
 	{
 
@@ -266,6 +262,11 @@ int main(int argc, char *argv[])
 
 			printf("Total time taken by CPU: %f\n", cpu_time_used);
 			printf("Total CPU clock cycles: %llu\n", total_clock_cycles);
+			printf("THE FOLLOWING IMPLEMENTATIONS HAVE BEEN COMPLETED:\n");
+			printf("1) FIRST and FOLLOW set automated\n");
+			printf("2) Both lexical and syntax analysis modules implemented\n");
+			printf("3) The parse tree has been constructed\n");
+			printf("4) All modules work with all the given 1-6 testcases\n");
 			break;
 		}
 		default:

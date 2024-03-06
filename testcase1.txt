@@ -1,0 +1,11 @@
+============================================================ PARSE TREE ======================================================================
+lexeme                 lineno                 tokenName              valueIfNumber          parentNodeSymbol            isLeafNode(yes/no)     nodeSymbol            
+----------------------------------------------------------------------------------------------------------------------------------------------
+----                   --                     ----                   ----                   <program>                   no                     <otherFunctions>      
+----                   --                     ----                   ----                   ----                        no                     <program>             
+_main                  5                      TK_MAIN                ----                   <mainFunction>              yes                    TK_MAIN               
+----                   --                     ----                   ----                   <program>                   no                     <mainFunction>        
+                       -1                     ERROR                  ----                   <stmts>                     yes                    ERROR                 
+----                   --                     ----                   ----                   <mainFunction>              no                     <stmts>               
+                       -1                     TK_END                 ----                   <mainFunction>              yes                    TK_END                
+                       -1                     $                      ----                   ----                        yes                    $                     

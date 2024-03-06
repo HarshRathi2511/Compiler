@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 		{
 		case 0:
 		{
-			freeAllafterMenu();
+			// freeAllafterMenu();
 			printf("\nSuccessfully EXITED\n");
 			break;
 		}
@@ -192,6 +192,8 @@ int main(int argc, char *argv[])
 			fclose(inputFile);
 			fclose(outputFile);
 
+			printf(GREEN "Parsing done successfully \n");
+
 			// reset
 			resetStateAndLineNumber();
 			break;
@@ -259,13 +261,18 @@ int main(int argc, char *argv[])
 			unsigned long long int total_clock_cycles;
 			total_clock_cycles = end - start; 
 
-			printf(BLUE "Total time taken by CPU: %f\n", cpu_time_used);
-			printf(BLUE "Total CPU clock cycles: %llu\n\n\n", total_clock_cycles);
+
 			printf(BLUE "THE FOLLOWING IMPLEMENTATIONS HAVE BEEN COMPLETED:\n");
 			printf(BLUE "1) FIRST and FOLLOW set automated\n");
 			printf(BLUE "2) Both lexical and syntax analysis modules implemented\n");
 			printf(BLUE "3) The parse tree has been constructed\n");
 			printf(BLUE "4) All modules work with all the given 1-6 testcases\n");
+
+			printf("........................\n");
+
+			printf(BLUE "Total time taken by CPU: %f\n", cpu_time_used);
+			printf(BLUE "Total CPU clock cycles: %llu\n\n\n", total_clock_cycles);
+			printf("........................\n");
 			break;
 		}
 		default:

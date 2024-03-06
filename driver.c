@@ -93,7 +93,8 @@ int main(int argc, char *argv[])
 
 		case 1:
 		{
-			Remove_Comments(inputFileChar, outputFileChar);
+			Remove_Comments(inputFileChar, "random.txt");
+			printf("\n");
 			printf("ALL THE COMMENTS IN THE TESTCASE FILE ARE SUCESSFULLY REMOVED.\n");
 			// print the time for printing the tokens
 			break;
@@ -103,8 +104,8 @@ int main(int argc, char *argv[])
 		{
 
 			FILE *inputFile = fopen(inputFileChar, "r");
-			FILE *outputFile = fopen(outputFileChar, "w"); // Open file for writing tokens
-			if (inputFile == NULL || outputFile == NULL)
+			// FILE *outputFile = fopen(outputFileChar, "w"); // Open file for writing tokens
+			if (inputFile == NULL)
 			{
 				fprintf(stderr, "Error opening input or output file.\n");
 				return 1;
@@ -116,7 +117,7 @@ int main(int argc, char *argv[])
 			{
 				fprintf(stderr, "Error setting up lexer.\n");
 				fclose(inputFile);
-				fclose(outputFile);
+				// fclose(outputFile);
 				return 1;
 			}
 			while (true)
@@ -130,7 +131,7 @@ int main(int argc, char *argv[])
 			}
 
 			fclose(inputFile);
-			fclose(outputFile);
+			// fclose(outputFile);
 
 			// for new instance of running the lexer
 			//! add the global variables here

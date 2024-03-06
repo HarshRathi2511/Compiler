@@ -60,7 +60,7 @@ void Remove_Comments(char *inputFile, char *outputFile)
 			*(com_ptr + 1) = '\0';
 		}
 		no--;
-		fprintf(out, "%s", readBuffer);
+		// fprintf(out, "%s", readBuffer);
 		printf("%s", readBuffer);
 	}
 

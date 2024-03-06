@@ -72,13 +72,13 @@ int main(int argc, char *argv[])
 	do
 	{
 
-		printf("\n\n###### CHOOSE AN OPTION ###### \n\n");
-		printf("0: EXIT\n");
-		printf("1: Remove comments from the testcase file\n");
-		printf("2: Run lexer, Generate and Print token list on console\n");
-		printf("3: Run Parser, Print all errors on the console  and print Parse Tree in a file \n");
-		printf("4: Total Compiling Time\n");
-		printf("Enter Your Choice : ");
+		printf(YELLOW "\n\n###### CHOOSE AN OPTION ###### \n\n");
+		printf(YELLOW "0: EXIT\n");
+		printf(YELLOW "1: Remove comments from the testcase file\n");
+		printf(YELLOW "2: Run lexer, Generate and Print token list on console\n");
+		printf(YELLOW "3: Run Parser, Print all errors on the console  and print Parse Tree in a file \n");
+		printf(YELLOW "4: Total Compiling Time\n");
+		printf(YELLOW "Enter Your Choice : ");
 		// global_vars(); // Initialization of the global variables
 		scanf("%d", &input);
 		printf("\n");
@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 		default:
-			printf("\nResponse %d is not valid, please enter the appropriate input\n", input);
+			printf(RED "\nResponse %d is not valid, please enter the appropriate input\n", input);
 		}
 		// fclose(file_ptr);
 	} while (input != 0);

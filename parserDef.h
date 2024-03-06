@@ -1,3 +1,13 @@
+/*  Group No : 7
+2020B1A71605P Samarth Trivedi
+2020B1A71612P Harshil Sethi
+2020B1A70644P Nitish Sahani
+2020B3A70786P Neel Dedhia
+2020B3A70794P Harsh Rathi
+2020B5A70604P Divyan Poddar
+*/
+
+
 #ifndef MY_HEADER_FILE_H
 #define MY_HEADER_FILE_H
 
@@ -11,7 +21,7 @@
 #define NON_TERMINALS 53
 #define TERMINALS 58 // 56 terminals + 1 epsilon + 1 dollar
 
-#include <time.h>
+//#include <time.h>
 
 // Define the Token struct
 // typedef struct

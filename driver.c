@@ -254,11 +254,11 @@ int main(int argc, char *argv[])
 
 			// reset
 			resetStateAndLineNumber();
-			// Your code here
+			
 			end = clock();
 			cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
 			unsigned long long int total_clock_cycles;
-			total_clock_cycles = end - start; // Calculate the total clock cycles
+			total_clock_cycles = end - start; 
 
 			printf("Total time taken by CPU: %f\n", cpu_time_used);
 			printf("Total CPU clock cycles: %llu\n", total_clock_cycles);

@@ -228,10 +228,9 @@ int main(int argc, char *argv[])
 				{
 					break;
 				}
-				// if (token->token_type == TK_ERROR)
-				// {
-					//printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
-				//}
+				if (token->token_type == TK_ERROR)
+				{printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
+				}
 				// printToken(token);
 				if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
 				{

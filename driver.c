@@ -228,10 +228,10 @@ int main(int argc, char *argv[])
 				{
 					break;
 				}
-				if (token->token_type == TK_ERROR)
-				{
-					printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
-				}
+				// if (token->token_type == TK_ERROR)
+				// {
+					//printf(RED "Line Number: %u Error: %s \n", token->line_number, token->lexeme);
+				//}
 				// printToken(token);
 				if (token->token_type != TK_ERROR && token->token_type != TK_COMMENT)
 				{
@@ -260,13 +260,13 @@ int main(int argc, char *argv[])
 			unsigned long long int total_clock_cycles;
 			total_clock_cycles = end - start; 
 
-			printf("Total time taken by CPU: %f\n", cpu_time_used);
-			printf("Total CPU clock cycles: %llu\n", total_clock_cycles);
-			printf("THE FOLLOWING IMPLEMENTATIONS HAVE BEEN COMPLETED:\n");
-			printf("1) FIRST and FOLLOW set automated\n");
-			printf("2) Both lexical and syntax analysis modules implemented\n");
-			printf("3) The parse tree has been constructed\n");
-			printf("4) All modules work with all the given 1-6 testcases\n");
+			printf(BLUE "Total time taken by CPU: %f\n", cpu_time_used);
+			printf(BLUE "Total CPU clock cycles: %llu\n\n\n", total_clock_cycles);
+			printf(BLUE "THE FOLLOWING IMPLEMENTATIONS HAVE BEEN COMPLETED:\n");
+			printf(BLUE "1) FIRST and FOLLOW set automated\n");
+			printf(BLUE "2) Both lexical and syntax analysis modules implemented\n");
+			printf(BLUE "3) The parse tree has been constructed\n");
+			printf(BLUE "4) All modules work with all the given 1-6 testcases\n");
 			break;
 		}
 		default:
